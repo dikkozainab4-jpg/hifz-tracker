@@ -14,12 +14,12 @@ Hifzly (Hifz Tracker) is a Quran memorization planner and tracker, built as a st
 ### Commands
 - `npm test`: unit tests (`node --test`) for calc, dates, reflect and the SQLite store.
 - `npm run dev`: serve `site/` locally on :8080.
-- Deploy: `npx netlify-cli deploy --dir=site --prod` (needs `netlify login` or `NETLIFY_AUTH_TOKEN`), or link the GitHub repo in Netlify (publish dir `site`, no build command; `netlify.toml` sets it).
+- Deploy: `npx netlify-cli deploy --dir=site --prod` (needs `netlify login` or `NETLIFY_AUTH_TOKEN`), or link the GitHub repo in Netlify (publish dir `site`, no build command; `netlify.toml` sets it and `site/_headers` carries the CSP and wasm headers).
 
 ### Architecture (`site/js/`)
 - `calc.js`, `dates.js`, `reflect.js`: pure logic (weekly = daily x 6, monthly = weekly x 4, 10 pages = 1 Hizb; Mon-Sun weeks; consistency ignores future days).
 - `store.js` + `schema.js`: SQLite via vendored sql.js (`site/vendor/`). All SQL is parameterised. The DB bytes are saved to IndexedDB (`idb.js`) with a debounce. Falls back to in-memory with a visible notice if IndexedDB is unavailable. Also has JSON export/import and a one-time import of the prototype's `localStorage["quranTrakPersonalData_v2"]` (ticked "Completed" boxes become the plan's daily target).
-- `app.js`, `ui.js`: rendering. User text is only inserted with `textContent`. The CSP in `netlify.toml` forbids inline scripts and styles, so use classes and `element.style.x`, never `style=""` or `on*=""`.
+- `app.js`, `ui.js`: rendering. User text is only inserted with `textContent`. The CSP in `site/_headers` forbids inline scripts and styles, so use classes and `element.style.x`, never `style=""` or `on*=""`.
 
 ### Storage decision
 SQLite runs **in the browser** (sql.js + IndexedDB) because Netlify Functions have an ephemeral filesystem. Hosted SQLite (Turso/libSQL) via Functions is deferred until accounts/sync/teacher features (§25-28).

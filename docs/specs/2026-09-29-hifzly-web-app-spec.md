@@ -64,7 +64,7 @@ Each requirement has an ID that plan tasks and tests reference.
 
 ### Hosting (the goal)
 - **R-HOST-1** `netlify.toml` publishes `site/` with no build command.
-- **R-HOST-2** `.wasm` is served as `application/wasm`. Security headers are set (CSP allowing `'wasm-unsafe-eval'`, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`).
+- **R-HOST-2** `.wasm` is served as `application/wasm`. Security headers are set in `site/_headers` (CSP allowing `'wasm-unsafe-eval'`, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`).
 - **R-HOST-3** A public `https://*.netlify.app` URL loads the app and passes the smoke checks in §4.
 - **R-HOST-4** Deploys come from the GitHub repo `origin` (continuous deploy) when the user links it. A CLI deploy is used to get a first live URL.
 

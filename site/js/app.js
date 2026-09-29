@@ -400,6 +400,9 @@ function wire() {
     if (f) importData(f);
   });
   $("#dismiss-notice").addEventListener("click", () => { $("#storage-notice").hidden = true; });
+  const begin = $("#begin");
+  begin.disabled = false;
+  begin.textContent = "Begin your journey";
   document.body.dataset.ready = "true";
   window.addEventListener("pagehide", () => store.flush());
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") store.flush(); });
