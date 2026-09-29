@@ -22,7 +22,7 @@ test("day round-trip and daysBetween only returns rows in range", () => {
   s.saveDay("2026-09-22", { notes: "good", entries: { ...blank, old: { pages: 2.5, note: "1-10" } } });
   const d = s.getDay("2026-09-22");
   assert.equal(d.notes, "good");
-  assert.deepEqual(d.entries.old, { pages: 2.5, note: "1-10" });
+  assert.deepEqual(d.entries.old, { pages: 2.5, note: "1-10", done: false });
   const m = s.daysBetween("2026-09-21", "2026-09-30");
   assert.deepEqual([...m.keys()], ["2026-09-22"]);
   assert.equal(m.get("2026-09-22").entries.old, 2.5);
@@ -93,4 +93,34 @@ test("persistence: debounced save receives bytes that reopen with the same data"
   await s.flush();
   assert.ok(saved instanceof Uint8Array);
   assert.equal(fresh({ bytes: saved }).getProfile().name, "P");
+});
+
+test("ticking a category counts the plan's daily target as its pages", () => {
+  const s = fresh();
+  s.savePlan({ new: 2, old: 5, recent: 2, tilawah: 10 });
+  s.saveDay("2026-09-22", { entries: { ...blank, new: { done: true, note: "1-10" }, old: { done: false } } });
+  const d = s.getDay("2026-09-22");
+  assert.deepEqual(d.entries.new, { pages: 2, note: "1-10", done: true });
+  assert.equal(d.entries.old.pages, 0);
+  const rec = s.daysBetween("2026-09-22", "2026-09-22").get("2026-09-22");
+  assert.equal(rec.entries.new, 2);
+  assert.equal(rec.anyDone, true);
+  s.saveDay("2026-09-22", { entries: blank });
+  assert.equal(s.getDay("2026-09-22").entries.new.done, false);
+});
+
+test("a ticked box with no plan still makes the day active", () => {
+  const s = fresh();
+  s.saveDay("2026-09-22", { entries: { ...blank, new: { done: true } } });
+  assert.equal(s.daysBetween("2026-09-22", "2026-09-22").get("2026-09-22").anyDone, true);
+});
+
+test("a database from before the done column is migrated", () => {
+  const old = new SQL.Database();
+  old.run("CREATE TABLE day (date TEXT PRIMARY KEY, notes TEXT NOT NULL DEFAULT '', completed INTEGER NOT NULL DEFAULT 0)");
+  old.run("CREATE TABLE day_entry (date TEXT NOT NULL, category TEXT NOT NULL, pages REAL NOT NULL DEFAULT 0, note TEXT NOT NULL DEFAULT '', PRIMARY KEY (date, category))");
+  old.run("INSERT INTO day (date) VALUES ('2026-09-22')");
+  old.run("INSERT INTO day_entry (date, category, pages) VALUES ('2026-09-22','new',2)");
+  const s = fresh({ bytes: old.export() });
+  assert.equal(s.getDay("2026-09-22").entries.new.done, true);
 });

@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS day_entry (
   category TEXT NOT NULL CHECK (category IN ('new','old','recent','tilawah')),
   pages REAL NOT NULL DEFAULT 0,
   note TEXT NOT NULL DEFAULT '',
+  done INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (date, category)
 );
 CREATE TABLE IF NOT EXISTS reflection (period TEXT PRIMARY KEY, text TEXT NOT NULL DEFAULT '');

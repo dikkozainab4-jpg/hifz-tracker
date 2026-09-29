@@ -68,20 +68,36 @@ function showTab(tab) {
 
 /* ---------- plan ---------- */
 
+// Plan-page labels follow the prototype (update.html); the tracker uses the plain category labels.
+const PLAN_LABELS = { new: "New Hifz", old: "Revision 1", recent: "Revision 2", tilawah: "Revision 3" };
+
+function hizbLabel(pages) {
+  const h = round1(pagesToHizb(pages));
+  return `${round1(pages)} pages (${h} Hizb${h === 1 ? "" : "s"})`;
+}
+
 function renderPlan() {
   const plan = store.getPlan();
-  const host = $("#plan-fields");
-  host.replaceChildren(
-    ...CATEGORIES.map(({ key, label }) => {
-      const readout = el("p", { class: "small-text", id: `plan-out-${key}` });
-      const input = el("input", {
+  const column = (title, field) =>
+    el("div", { class: "plan-section" }, el("h2", {}, title), ...CATEGORIES.map(({ key }) => field(key)));
+
+  const daily = column("Daily Plan", (key) =>
+    el("div", { class: "plan-field" },
+      el("label", { for: `plan-${key}` }, `${PLAN_LABELS[key]} — Pages per day`),
+      el("input", {
         id: `plan-${key}`, type: "number", min: "0", max: "604", step: "0.1", inputmode: "decimal",
-        placeholder: "0", value: plan[key] || "", "aria-describedby": `plan-out-${key}`,
-        oninput: () => onPlanInput(),
-      });
-      return el("div", { class: "plan-item" }, el("label", { for: `plan-${key}` }, `${label}: pages per day`), input, readout);
-    }),
-  );
+        placeholder: { new: "e.g. 1", old: "e.g. 2", recent: "e.g. 2", tilawah: "e.g. 10" }[key],
+        value: plan[key] || "", oninput: onPlanInput,
+      })));
+
+  const derived = (title, unit, prefix) =>
+    column(title, (key) =>
+      el("div", { class: "plan-field calculated" },
+        el("label", { class: "calculated-label", for: `${prefix}-${key}` }, `${PLAN_LABELS[key]} — Pages per ${unit}`),
+        el("input", { id: `${prefix}-${key}`, readonly: true, placeholder: "—", "aria-describedby": `${prefix}-hizb-${key}` }),
+        el("div", { class: "plan-result", id: `${prefix}-hizb-${key}` }, "—")));
+
+  $("#plan-fields").replaceChildren(daily, derived("Weekly Plan", "week", "week"), derived("Monthly Plan", "month", "month"));
   updatePlanReadouts();
 }
 
@@ -89,18 +105,14 @@ function readPlanInputs() {
   return Object.fromEntries(CATEGORIES.map(({ key }) => [key, toPages($(`#plan-${key}`).value)]));
 }
 
-function hizbLabel(pages) {
-  const h = round1(pagesToHizb(pages));
-  return `${fmtPages(round1(pages))} (${h} Hizb${h === 1 ? "" : "s"})`;
-}
-
 function updatePlanReadouts() {
   const plan = readPlanInputs();
   for (const { key } of CATEGORIES) {
     const d = plan[key];
-    $(`#plan-out-${key}`).textContent = d
-      ? `Weekly (×6): ${hizbLabel(weeklyOf(d))} · Monthly (×4): ${hizbLabel(monthlyOf(d))}`
-      : "Enter a daily amount to see your weekly and monthly targets.";
+    for (const [prefix, pages] of [["week", weeklyOf(d)], ["month", monthlyOf(d)]]) {
+      $(`#${prefix}-${key}`).value = d ? round1(pages) : "";
+      $(`#${prefix}-hizb-${key}`).textContent = d ? hizbLabel(pages) : "—";
+    }
   }
 }
 
@@ -146,29 +158,23 @@ function renderDaily() {
     onchange: (e) => { if (isValidDate(e.target.value)) { state.date = e.target.value; renderDaily(); } },
   });
 
-  const entries = CATEGORIES.map(({ key, label }) => {
+  const rows = CATEGORIES.map(({ key, label }) => {
     const target = plan[key];
-    const status = el("p", { class: "entry-status", id: `status-${key}` });
-    const pages = el("input", {
-      id: `pages-${key}`, type: "number", min: "0", max: "604", step: "0.5", inputmode: "decimal",
-      value: day.entries[key].pages || "", placeholder: "0", oninput: onDailyInput,
-    });
-    const note = el("input", {
-      id: `note-${key}`, type: "text", maxlength: "200", value: day.entries[key].note,
-      placeholder: key === "tilawah" ? "e.g. Juz 1" : "Ayah range, e.g. 1–10", oninput: onDailyInput,
-    });
-    return el("div", { class: "entry" },
-      el("div", { class: "entry-head" }, el("h3", {}, label), el("span", { class: "small-text" }, target ? `Target: ${fmtPages(target)}` : "No target set")),
-      el("div", { class: "entry-grid" },
-        el("div", {}, el("label", { for: `pages-${key}` }, "Pages done"), pages),
-        el("div", {}, el("label", { for: `note-${key}` }, "Range or note"), note)),
-      status);
+    return el("tr", {},
+      el("th", { scope: "row" }, label, target ? el("span", { class: "row-target" }, `Target: ${fmtPages(target)}`) : null),
+      el("td", {}, el("input", {
+        id: `note-${key}`, type: "text", maxlength: "200", value: day.entries[key].note, "aria-label": `${label} ayah range`,
+        placeholder: key === "tilawah" ? "e.g. Juz 1" : key === "new" ? "e.g. 1–10" : "Ayah range", oninput: onDailyInput,
+      })),
+      el("td", { class: "check-cell" }, el("input", {
+        id: `done-${key}`, class: "check", type: "checkbox", checked: day.entries[key].done, "aria-label": `${label} completed`, onchange: onDailyInput,
+      })));
   });
 
   const fill = el("div", { class: "progress-fill", id: "dailyProgressFill" });
   host.replaceChildren(el("div", { class: "card" },
     el("div", { class: "eyebrow" }, "DAILY HIFZ"),
-    el("h2", {}, "Record today's memorisation and revision"),
+    el("h2", {}, "Record today's memorisation and revision."),
     el("div", { class: "toolbar" },
       el("div", { class: "field" }, el("label", { for: "dailyDate" }, "Date"), dateInput),
       el("div", { class: "stepper" },
@@ -176,16 +182,20 @@ function renderDaily() {
         el("button", { type: "button", class: "secondary-btn", onclick: () => { state.date = todayStr(); renderDaily(); } }, "Today"),
         el("button", { type: "button", class: "secondary-btn", "aria-label": "Next day", onclick: () => shiftDay(1) }, "→"))),
     el("p", { class: "small-text" }, fmtDate(state.date)),
-    el("div", { class: "entries" }, ...entries),
+    el("table", { class: "daily-table" },
+      el("thead", {}, el("tr", {}, el("th", { scope: "col" }, "Category"), el("th", { scope: "col" }, "Ayah Range"), el("th", { scope: "col", class: "check-cell" }, "Completed"))),
+      el("tbody", {}, ...rows)),
     el("div", { class: "progress-box" },
-      el("div", { class: "progress-label" }, el("span", {}, "Today against your targets"), el("strong", { id: "dailyPercentage" })),
-      el("div", { class: "progress-bar" }, fill)),
+      el("div", { class: "progress-label" }, el("span", {}, "Daily progress"), el("strong", { id: "dailyPercentage" })),
+      el("div", { class: "progress-bar" }, fill),
+      el("p", { class: "small-text", id: "dailyMessage" })),
     el("div", { class: "notes" },
-      el("label", { for: "dailyNotes" }, "Notes / reflections"),
+      el("label", { for: "dailyNotes" }, "Notes / Reflections"),
+      el("p", { class: "small-text" }, "Write anything you want to remember from today."),
       el("textarea", { id: "dailyNotes", placeholder: "How did today's Hifz go?", oninput: onDailyInput }, day.notes)),
     el("div", { class: "daily-actions" },
       el("button", { type: "button", class: "primary-btn", id: "complete-day", "aria-pressed": String(day.completed), onclick: toggleComplete },
-        day.completed ? "Day complete ✓ (undo)" : "Mark day complete"))));
+        day.completed ? "Day complete ✓ (undo)" : "Mark Day Complete"))));
 
   $("#dailyNotes").value = day.notes;
   updateDailyStatus();
@@ -199,7 +209,7 @@ function shiftDay(n) {
 function collectDay() {
   const entries = {};
   for (const { key } of CATEGORIES) {
-    entries[key] = { pages: toPages($(`#pages-${key}`).value), note: $(`#note-${key}`).value };
+    entries[key] = { done: $(`#done-${key}`).checked, note: $(`#note-${key}`).value };
   }
   return { notes: $("#dailyNotes").value, completed: $("#complete-day").getAttribute("aria-pressed") === "true", entries };
 }
@@ -218,24 +228,13 @@ function toggleComplete() {
 }
 
 function updateDailyStatus() {
-  const plan = store.getPlan();
-  const day = collectDay();
-  let done = 0;
-  let planned = 0;
-  for (const { key } of CATEGORIES) {
-    const target = plan[key];
-    const actual = day.entries[key].pages;
-    planned += target;
-    done += target ? Math.min(actual, target) : 0;
-    const s = $(`#status-${key}`);
-    s.classList.toggle("met", Boolean(target) && actual >= target);
-    s.textContent = target && actual >= target ? "Target met, alhamdulillah."
-      : actual > 0 ? (target ? `${fmtPages(round1(actual))} of ${fmtPages(target)}. Every page counts, keep going.` : `${fmtPages(round1(actual))} recorded.`)
-      : target ? "Not started yet. A little is better than none." : "Set a target in your Hifz Plan to compare.";
-  }
-  const pct = planned ? Math.round((done / planned) * 100) : 0;
-  $("#dailyPercentage").textContent = planned ? `${pct}%` : "—";
+  const done = CATEGORIES.filter(({ key }) => $(`#done-${key}`).checked).length;
+  const pct = Math.round((done / CATEGORIES.length) * 100);
+  $("#dailyPercentage").textContent = `${pct}%`;
   setBar($("#dailyProgressFill"), pct);
+  $("#dailyMessage").textContent = done === CATEGORIES.length ? "Everything done today, alhamdulillah."
+    : done > 0 ? `${done} of ${CATEGORIES.length} done. Keep going, every step counts.`
+    : "A little is better than none. Start whenever you are ready.";
 }
 
 /* ---------- weekly / monthly ---------- */

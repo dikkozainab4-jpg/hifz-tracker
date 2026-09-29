@@ -23,7 +23,7 @@ export function summarise(range, dayRecords, plan, today) {
       pages += p;
     }
     const completed = Boolean(rec?.completed);
-    const active = pages > 0 || completed;
+    const active = pages > 0 || completed || Boolean(rec?.anyDone);
     const elapsed = date <= today;
     if (elapsed) elapsedDays++;
     if (active) activeDays++;

@@ -25,6 +25,12 @@ export function createStore(SQL, { bytes, save, persisted = false, saveDelayMs =
   const db = bytes ? new SQL.Database(bytes) : new SQL.Database();
   db.run("PRAGMA foreign_keys = ON;");
   db.exec(SCHEMA_SQL);
+  // Databases created before the "done" checkbox existed: add the column and treat recorded pages as done.
+  const cols = db.exec("PRAGMA table_info(day_entry)")[0].values.map((r) => r[1]);
+  if (!cols.includes("done")) {
+    db.run("ALTER TABLE day_entry ADD COLUMN done INTEGER NOT NULL DEFAULT 0");
+    db.run("UPDATE day_entry SET done = 1 WHERE pages > 0");
+  }
 
   let timer = null;
   const flush = async () => {
@@ -94,14 +100,15 @@ export function createStore(SQL, { bytes, save, persisted = false, saveDelayMs =
 
     getDay(date) {
       const day = one("SELECT notes, completed FROM day WHERE date = ?", [date]);
-      const entries = Object.fromEntries(KEYS.map((k) => [k, { pages: 0, note: "" }]));
-      for (const e of all("SELECT category, pages, note FROM day_entry WHERE date = ?", [date])) {
-        entries[e.category] = { pages: e.pages, note: e.note };
+      const entries = Object.fromEntries(KEYS.map((k) => [k, { pages: 0, note: "", done: false }]));
+      for (const e of all("SELECT category, pages, note, done FROM day_entry WHERE date = ?", [date])) {
+        entries[e.category] = { pages: e.pages, note: e.note, done: Boolean(e.done) };
       }
       return { date, notes: day?.notes ?? "", completed: Boolean(day?.completed), entries };
     },
     saveDay(date, { notes = "", completed = false, entries = {} }) {
       if (!isValidDate(date)) throw new ImportError("Invalid date");
+      const plan = store.getPlan();
       tx(() => {
         run(
           "INSERT INTO day (date, notes, completed) VALUES (?, ?, ?) " +
@@ -110,10 +117,13 @@ export function createStore(SQL, { bytes, save, persisted = false, saveDelayMs =
         );
         for (const k of KEYS) {
           const e = entries[k] ?? {};
+          const done = Boolean(e.done);
+          // A ticked box counts as that category's daily target at the time it was ticked.
+          const pages = e.pages !== undefined ? toPages(e.pages) : done ? toPages(plan[k]) : 0;
           run(
-            "INSERT INTO day_entry (date, category, pages, note) VALUES (?, ?, ?, ?) " +
-              "ON CONFLICT(date, category) DO UPDATE SET pages = excluded.pages, note = excluded.note",
-            [date, k, toPages(e.pages), text(e.note).slice(0, 200)],
+            "INSERT INTO day_entry (date, category, pages, note, done) VALUES (?, ?, ?, ?, ?) " +
+              "ON CONFLICT(date, category) DO UPDATE SET pages = excluded.pages, note = excluded.note, done = excluded.done",
+            [date, k, pages, text(e.note).slice(0, 200), done ? 1 : 0],
           );
         }
       });
@@ -124,11 +134,13 @@ export function createStore(SQL, { bytes, save, persisted = false, saveDelayMs =
     daysBetween(start, end) {
       const map = new Map();
       for (const d of all("SELECT date, notes, completed FROM day WHERE date BETWEEN ? AND ?", [start, end])) {
-        map.set(d.date, { completed: Boolean(d.completed), notes: d.notes, entries: { new: 0, old: 0, recent: 0, tilawah: 0 } });
+        map.set(d.date, { completed: Boolean(d.completed), anyDone: false, notes: d.notes, entries: { new: 0, old: 0, recent: 0, tilawah: 0 } });
       }
-      for (const e of all("SELECT date, category, pages FROM day_entry WHERE date BETWEEN ? AND ?", [start, end])) {
+      for (const e of all("SELECT date, category, pages, done FROM day_entry WHERE date BETWEEN ? AND ?", [start, end])) {
         const rec = map.get(e.date);
-        if (rec) rec.entries[e.category] = e.pages;
+        if (!rec) continue;
+        rec.entries[e.category] = e.pages;
+        if (e.done) rec.anyDone = true;
       }
       return map;
     },
@@ -172,7 +184,8 @@ export function createStore(SQL, { bytes, save, persisted = false, saveDelayMs =
         if (!isValidDate(d?.date)) throw new ImportError("Backup contains an invalid date.");
         const entries = {};
         for (const k of KEYS) {
-          entries[k] = { pages: num(d.entries?.[k]?.pages ?? 0, 0, MAX_PAGES, `${d.date} ${k}`), note: text(d.entries?.[k]?.note) };
+          const pages = num(d.entries?.[k]?.pages ?? 0, 0, MAX_PAGES, `${d.date} ${k}`);
+          entries[k] = { pages, note: text(d.entries?.[k]?.note), done: d.entries?.[k]?.done === undefined ? pages > 0 : Boolean(d.entries[k].done) };
         }
         return { date: d.date, notes: text(d.notes), completed: Boolean(d.completed), entries };
       });
@@ -222,7 +235,8 @@ export function createStore(SQL, { bytes, save, persisted = false, saveDelayMs =
           const entries = {};
           for (const k of KEYS) {
             const lk = legacyKeys[k];
-            entries[k] = { pages: d[`${lk}Completed`] ? plan[k] : 0, note: text(d[`${lk}Range`]) };
+            const done = Boolean(d[`${lk}Completed`]);
+            entries[k] = { pages: done ? plan[k] : 0, note: text(d[`${lk}Range`]), done };
           }
           store.saveDay(date, { notes: text(d.notes), completed: Boolean(d.completedDay), entries });
         }
