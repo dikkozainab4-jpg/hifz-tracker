@@ -16,10 +16,11 @@
 <nav class="top-nav" aria-label="Main">
   <div class="nav-inner">
     <div class="logo">HIFZLY</div>
-    <div class="nav-links">
+    <div class="nav-links" id="nav-links" hidden>
       <button type="button" data-nav="welcome">Home</button>
       <button type="button" data-nav="plans">Hifz Plan</button>
       <button type="button" data-nav="tracker">My Tracker</button>
+      <button type="button" id="sign-out">Sign out</button>
     </div>
   </div>
 </nav>
@@ -31,7 +32,26 @@
 
 <main id="main">
 
-<section id="welcome" class="page active" aria-labelledby="welcome-title">
+<section id="auth" class="page active" aria-labelledby="auth-title">
+  <div class="container auth-wrap">
+    <form class="card" id="auth-form" novalidate>
+      <div class="eyebrow" id="auth-eyebrow">SIGN IN</div>
+      <h2 id="auth-title">Welcome back</h2>
+      <p class="small-text">Your account keeps your Hifz progress private and available on every device.</p>
+      <div class="field" id="auth-email-field"><label for="auth-email">Email</label><input id="auth-email" type="email" autocomplete="email" maxlength="254" required></div>
+      <div class="field" id="auth-password-field"><label for="auth-password">Password</label><input id="auth-password" type="password" autocomplete="current-password" maxlength="200" required></div>
+      <p class="auth-message" id="auth-message" role="alert" hidden></p>
+      <div class="action-row auth-actions"><button type="submit" class="primary-btn" id="auth-submit">Sign in</button></div>
+      <div class="auth-links">
+        <button type="button" class="link-btn" id="auth-to-forgot">Forgot password?</button>
+        <button type="button" class="link-btn" id="auth-to-signup">Create an account</button>
+        <button type="button" class="link-btn" id="auth-to-signin" hidden>I already have an account</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section id="welcome" class="page" aria-labelledby="welcome-title">
   <div class="welcome-box">
     <div class="eyebrow">HIFZLY</div>
     <p class="bismillah" lang="ar" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
@@ -125,7 +145,9 @@
 
     <div class="card data-card">
       <div class="eyebrow">YOUR DATA</div>
-      <p class="small-text">Your Hifz data is kept privately in this browser on this device. Download a backup now and then, especially before clearing browser data or switching devices.</p>
+      <p class="small-text">Your Hifz data is saved privately to your account, and a copy is kept on this device so the app opens quickly. You can also download a backup file.</p>
+      <p class="small-text" id="account-line"></p>
+      <p class="small-text" id="sync-status" role="status"></p>
       <div class="data-actions">
         <button type="button" class="secondary-btn" id="export-data">Download backup</button>
         <button type="button" class="secondary-btn" id="import-data">Restore from backup</button>
@@ -157,6 +179,7 @@
 <noscript><p class="notice">Hifzly needs JavaScript to run.</p></noscript>
 
 <script src="vendor/sql-wasm.js"></script>
+<script src="vendor/supabase.js"></script>
 <script type="module" src="js/app.js"></script>
 </body>
 </html>

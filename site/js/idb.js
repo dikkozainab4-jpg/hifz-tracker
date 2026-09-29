@@ -1,7 +1,7 @@
 // Minimal IndexedDB key/value persistence for the SQLite database bytes.
 const DB_NAME = "hifzly";
 const STORE = "kv";
-const KEY = "sqlite";
+const DEFAULT_KEY = "sqlite"; // pre-accounts database; signed-in users get "sqlite:<userId>"
 
 function open() {
   return new Promise((resolve, reject) => {
@@ -24,7 +24,7 @@ const request = (db, mode, fn) =>
   });
 
 /** Resolves {bytes, save} or rejects when persistent storage cannot be used. */
-export async function openPersistence() {
+export async function openPersistence(KEY = DEFAULT_KEY) {
   const db = await open();
   const bytes = await request(db, "readonly", (s) => s.get(KEY));
   return {

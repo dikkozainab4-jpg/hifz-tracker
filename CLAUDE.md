@@ -22,7 +22,11 @@ Hifzly (Hifz Tracker) is a Quran memorization planner and tracker, built as a st
 - `app.js`, `ui.js`: rendering. User text is only inserted with `textContent`. The CSP in `site/_headers` forbids inline scripts and styles, so use classes and `element.style.x`, never `style=""` or `on*=""`.
 
 ### Storage decision
-SQLite runs **in the browser** (sql.js + IndexedDB) because Netlify Functions have an ephemeral filesystem. Hosted SQLite (Turso/libSQL) via Functions is deferred until accounts/sync/teacher features (§25-28).
+Accounts are **required**. Sign-in is Supabase Auth (email + password, email confirmation, password reset). Each user has one row in `public.user_data` (`supabase/schema.sql`, row-level security: own row only) holding the same JSON as the backup export.
+
+SQLite still runs **in the browser** (sql.js) as the fast working copy, saved to IndexedDB under a per-user key `sqlite:<userId>` (`idb.js`). Sync (`sync.js`, `cloud.js`, wired in `app.js` `startSession`/`endSession`): edits are pushed to Supabase after a debounce with retry. A per-user "dirty" flag in localStorage records unsent edits; on sign-in, dirty local data wins, otherwise the account copy replaces local. `account.js` is the sign-in UI. The Supabase URL and publishable key in `js/config.js` are public by design; never put a `service_role` key in the repo. The CSP `connect-src` in `site/_headers` allows the Supabase URL.
+
+Conflict handling is last-write-wins on the whole snapshot. Teacher/parent features (§25-28) will need per-day tables instead of one JSON row.
 
 ## Prototype architecture (`base html/update.html`, superseded by `site/`)
 

@@ -33,13 +33,17 @@ export function createStore(SQL, { bytes, save, persisted = false, saveDelayMs =
   }
 
   let timer = null;
+  let edited = false; // true when there are edits since the last save; passed to save() as its 2nd argument
   const flush = async () => {
     clearTimeout(timer);
     timer = null;
-    if (save) await save(db.export());
+    const hadEdits = edited;
+    edited = false;
+    if (save) await save(db.export(), hadEdits);
   };
   const changed = () => {
     if (!save) return;
+    edited = true;
     clearTimeout(timer);
     timer = setTimeout(() => flush().catch((e) => console.warn("Could not persist data", e)), saveDelayMs);
   };

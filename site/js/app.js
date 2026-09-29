@@ -4,36 +4,121 @@ import { summarise } from "./reflect.js";
 import { createStore, ImportError } from "./store.js";
 import { openPersistence } from "./idb.js";
 import { $, $$, el, toast, setBar, fmtPages, fmtDate } from "./ui.js";
+import { initAccount } from "./account.js";
+import { fetchRemote, pushRemote } from "./cloud.js";
+import { createSync } from "./sync.js";
 
 const LEGACY_KEY = "quranTrakPersonalData_v2";
+const ADOPTED_KEY = "hifzly:adopted-old-data";
+let SQL;
 let store;
+let sync;
+let account;
 const state = { date: todayStr(), tab: "daily" };
 
-/* ---------- boot ---------- */
+/* ---------- boot & session ---------- */
 
 async function boot() {
+  SQL = await window.initSqlJs({ locateFile: (f) => `vendor/${f}` });
+  wire();
+  account = initAccount({ onSignedIn: startSession, onSignedOut: endSession });
+}
+
+const SYNC_TEXT = {
+  saving: "Saving to your account…",
+  saved: "Saved to your account ✓",
+  offline: "Not saved to your account yet. Your changes are safe on this device and will upload when you are back online.",
+};
+
+/** Progress saved on this device before accounts existed (anonymous database or the prototype's localStorage). */
+async function findOldLocalData() {
+  try {
+    const anon = await openPersistence();
+    if (anon.bytes) {
+      const tmp = createStore(SQL, { bytes: anon.bytes });
+      const snapshot = tmp.hasData() ? tmp.exportJson() : null;
+      tmp.close();
+      if (snapshot) return { snapshot };
+    }
+  } catch { /* no old database */ }
+  return localStorage.getItem(LEGACY_KEY) ? { legacy: localStorage.getItem(LEGACY_KEY) } : null;
+}
+
+async function startSession(user) {
+  const userId = user.id;
   let persistence = {};
   let persisted = false;
   try {
-    persistence = await openPersistence();
+    persistence = await openPersistence(`sqlite:${userId}`);
     persisted = true;
     navigator.storage?.persist?.().catch(() => {});
   } catch {
     $("#storage-notice").hidden = false;
   }
 
-  const SQL = await window.initSqlJs({ locateFile: (f) => `vendor/${f}` });
-  store = createStore(SQL, { bytes: persistence.bytes, save: persistence.save, persisted });
+  // While loading, local saves must not be mistaken for the user's edits.
+  let loading = true;
+  const save = async (bytes, hadEdits) => {
+    await persistence.save?.(bytes);
+    if (hadEdits && !loading) sync?.changed();
+  };
+  store = createStore(SQL, { bytes: persistence.bytes, save: persistence.save ? save : undefined, persisted });
+  sync = createSync({
+    userId,
+    push: (snapshot) => pushRemote(userId, snapshot),
+    getSnapshot: () => store.exportJson(),
+    onStatus: (s) => { $("#sync-status").textContent = SYNC_TEXT[s]; },
+  });
 
   try {
-    store.importLegacy(localStorage.getItem(LEGACY_KEY));
+    if (!sync.isDirty()) {
+      // Nothing unsent on this device, so the account's copy is the truth.
+      const remote = await fetchRemote(userId);
+      if (remote) {
+        store.importJson(remote.data);
+      } else if (!store.hasData() && !localStorage.getItem(ADOPTED_KEY)) {
+        const old = await findOldLocalData();
+        if (old && confirm("We found Hifz progress saved on this device from before accounts. Add it to your account?")) {
+          if (old.snapshot) store.importJson(old.snapshot);
+          else store.importLegacy(old.legacy);
+          sync.changed();
+        }
+        try { localStorage.setItem(ADOPTED_KEY, "1"); } catch { /* ignore */ }
+      } else if (store.hasData()) {
+        sync.changed(); // local data that the account has never seen
+      }
+    }
   } catch (e) {
-    console.warn("Legacy import skipped", e);
+    console.warn("Could not load from your account", e);
+    // Keep working from the copy on this device, but do not push it over the account's copy.
+    $("#sync-status").textContent = e instanceof ImportError ? "Your saved account data could not be read, so it was not loaded." : SYNC_TEXT.offline;
   }
+  await store.flush();
+  loading = false;
+  if (sync.isDirty()) sync.flush().catch(() => {});
 
-  wire();
+  $("#account-line").textContent = `Signed in as ${user.email ?? "your account"}.`;
+  $("#nav-links").hidden = false;
   if (store.hasData()) openTracker();
   else showPage("welcome");
+}
+
+async function endSession() {
+  try {
+    await store?.flush();
+    await sync?.flush();
+  } catch { /* stays marked unsent on this device */ }
+  sync?.stop();
+  store?.close();
+  store = sync = undefined;
+  state.date = todayStr();
+  state.tab = "daily";
+  for (const id of ["daily", "weekly", "monthly", "plan-fields", "daily-target"]) $(`#${id}`).replaceChildren();
+  $("#userName").value = "";
+  $("#account-line").textContent = "";
+  $("#sync-status").textContent = "";
+  $("#nav-links").hidden = true;
+  showPage("auth");
 }
 
 /* ---------- navigation ---------- */
@@ -404,8 +489,16 @@ function wire() {
   begin.disabled = false;
   begin.textContent = "Begin your journey";
   document.body.dataset.ready = "true";
-  window.addEventListener("pagehide", () => store.flush());
-  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") store.flush(); });
+  $("#sign-out").addEventListener("click", async () => {
+    try {
+      await store?.flush();
+      await sync?.flush();
+    } catch { /* unsent changes stay on this device */ }
+    await account.signOut();
+  });
+  window.addEventListener("pagehide", () => store?.flush());
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") store?.flush(); });
+  window.addEventListener("online", () => sync?.flush().catch(() => {}));
 }
 
 boot().catch((e) => {
