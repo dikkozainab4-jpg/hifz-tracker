@@ -7,9 +7,7 @@
 <title>Quran Memorization Tracker</title>
 
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
@@ -95,8 +93,49 @@ textarea {
 }
 
 .primary-btn:hover {
-    opacity: 0.9;
+    opacity: .9;
     transform: translateY(-1px);
+}
+
+/* =========================
+   MAIN NAVIGATION
+========================= */
+
+.main-navigation {
+    max-width: 1050px;
+    margin: 0 auto 28px;
+    background: #fffdf9;
+    border: 1px solid #eadfd2;
+    border-radius: 18px;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    position: sticky;
+    top: 12px;
+    z-index: 50;
+    box-shadow: 0 5px 20px rgba(87,68,50,.04);
+}
+
+.main-nav-btn {
+    flex: 1;
+    max-width: 220px;
+    border: none;
+    background: transparent;
+    color: #776657;
+    padding: 12px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.main-nav-btn:hover {
+    background: #f5eee6;
+}
+
+.main-nav-btn.active {
+    background: #5f5044;
+    color: white;
 }
 
 /* =========================
@@ -130,7 +169,7 @@ textarea {
     border-radius: 22px;
     padding: 25px;
     margin-bottom: 22px;
-    box-shadow: 0 8px 25px rgba(87, 68, 50, 0.04);
+    box-shadow: 0 8px 25px rgba(87,68,50,.04);
 }
 
 .card-title {
@@ -146,7 +185,7 @@ textarea {
 }
 
 /* =========================
-   NAME + VIRTUES
+   NAME
 ========================= */
 
 .name-box {
@@ -168,6 +207,10 @@ textarea {
 .name-input:focus {
     border-color: #9c8876;
 }
+
+/* =========================
+   VIRTUES
+========================= */
 
 .virtue {
     padding: 18px 0;
@@ -199,7 +242,7 @@ textarea {
 }
 
 /* =========================
-   PLAN PAGE
+   PLAN
 ========================= */
 
 .plan-layout {
@@ -269,7 +312,7 @@ textarea {
     content: "  calculated";
     font-size: 10px;
     color: #aa9683;
-    letter-spacing: 0.5px;
+    letter-spacing: .5px;
 }
 
 .keys-card {
@@ -278,7 +321,7 @@ textarea {
 
 .keys {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4,1fr);
     gap: 12px;
 }
 
@@ -300,7 +343,7 @@ textarea {
 }
 
 /* =========================
-   APP NAVIGATION
+   TRACKER NAVIGATION
 ========================= */
 
 .tracker-navigation {
@@ -312,9 +355,6 @@ textarea {
     justify-content: center;
     gap: 7px;
     margin-bottom: 25px;
-    position: sticky;
-    top: 12px;
-    z-index: 20;
 }
 
 .nav-btn {
@@ -398,7 +438,7 @@ td:first-child {
 }
 
 .range-input {
-    width: 150px;
+    width: 180px;
     border: none;
     border-bottom: 1px solid #d9c9ba;
     background: transparent;
@@ -441,7 +481,7 @@ td:first-child {
     height: 100%;
     width: 0%;
     background: #6a5849;
-    transition: width 0.3s ease;
+    transition: width .3s ease;
 }
 
 .progress-text {
@@ -466,7 +506,7 @@ td:first-child {
 
 .week-days {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7,1fr);
     gap: 10px;
 }
 
@@ -536,35 +576,26 @@ td:first-child {
     flex-wrap: wrap;
 }
 
-.secondary-btn {
-    border: 1px solid #d9cabc;
-    background: #fffdf9;
-    color: #6c5b4c;
-    padding: 12px 20px;
-    border-radius: 25px;
-    cursor: pointer;
-}
-
 /* =========================
-   RESPONSIVE
+   MOBILE
 ========================= */
 
-@media (max-width: 800px) {
+@media (max-width:800px) {
 
     .plan-layout {
         grid-template-columns: 1fr;
     }
 
     .keys {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2,1fr);
     }
 
     .week-days {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4,1fr);
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width:600px) {
 
     .page {
         padding: 22px 13px 45px;
@@ -599,17 +630,21 @@ td:first-child {
         text-align: left;
     }
 
-    .tracker-navigation {
+    .main-navigation {
         position: static;
     }
 
-    .nav-btn {
+    .main-nav-btn {
         padding: 10px 7px;
         font-size: 12px;
     }
 
     .week-days {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .range-input {
+        width: 130px;
     }
 }
 </style>
@@ -617,8 +652,9 @@ td:first-child {
 
 <body>
 
+
 <!-- =====================================================
-     WELCOME PAGE
+     WELCOME
 ===================================================== -->
 
 <section id="welcome" class="page active">
@@ -651,17 +687,51 @@ td:first-child {
 
 
 <!-- =====================================================
-     NAME + VIRTUES
+     INTRO / HOME
 ===================================================== -->
 
 <section id="intro" class="page">
 
     <div class="container">
 
-        <div class="header">
-            <h1>Begin Your Journey</h1>
-            <p>A small step every day, bi idhnillah.</p>
+        <!-- MAIN NAVIGATION -->
+
+        <div class="main-navigation">
+
+            <button
+                class="main-nav-btn active"
+                onclick="goHome()"
+            >
+                Home
+            </button>
+
+            <button
+                class="main-nav-btn"
+                onclick="goToPlans()"
+            >
+                Hifz Plan
+            </button>
+
+            <button
+                class="main-nav-btn"
+                onclick="goToTracker()"
+            >
+                My Tracker
+            </button>
+
         </div>
+
+
+        <div class="header">
+
+            <h1>Begin Your Journey</h1>
+
+            <p>
+                A small step every day, bi idhnillah.
+            </p>
+
+        </div>
+
 
         <div class="name-box">
 
@@ -735,7 +805,10 @@ td:first-child {
 
             <div class="bottom-actions">
 
-                <button class="primary-btn" onclick="showPlans()">
+                <button
+                    class="primary-btn"
+                    onclick="goToPlans()"
+                >
                     Continue
                 </button>
 
@@ -749,12 +822,40 @@ td:first-child {
 
 
 <!-- =====================================================
-     PLAN PAGE
+     PLANS
 ===================================================== -->
 
 <section id="plans" class="page">
 
     <div class="container">
+
+        <!-- MAIN NAVIGATION -->
+
+        <div class="main-navigation">
+
+            <button
+                class="main-nav-btn"
+                onclick="goHome()"
+            >
+                Home
+            </button>
+
+            <button
+                class="main-nav-btn active"
+                onclick="goToPlans()"
+            >
+                Hifz Plan
+            </button>
+
+            <button
+                class="main-nav-btn"
+                onclick="goToTracker()"
+            >
+                My Tracker
+            </button>
+
+        </div>
+
 
         <div class="header">
 
@@ -769,14 +870,9 @@ td:first-child {
 
         <div class="plan-layout">
 
-            <!-- WEEKLY PLAN -->
-
             <div class="plan-section">
 
-                <h2>
-                    Weekly Plan
-                </h2>
-
+                <h2>Weekly Plan</h2>
 
                 <div class="plan-field">
 
@@ -816,9 +912,7 @@ td:first-child {
 
                 <div class="plan-field">
 
-                    <label>
-                        Revision 1
-                    </label>
+                    <label>Revision 1</label>
 
                     <input
                         id="weeklyR1"
@@ -833,9 +927,7 @@ td:first-child {
 
                 <div class="plan-field">
 
-                    <label>
-                        Revision 2
-                    </label>
+                    <label>Revision 2</label>
 
                     <input
                         id="weeklyR2"
@@ -850,9 +942,7 @@ td:first-child {
 
                 <div class="plan-field">
 
-                    <label>
-                        Revision 3
-                    </label>
+                    <label>Revision 3</label>
 
                     <input
                         id="weeklyR3"
@@ -867,14 +957,9 @@ td:first-child {
             </div>
 
 
-            <!-- MONTHLY PLAN -->
-
             <div class="plan-section">
 
-                <h2>
-                    Monthly Plan
-                </h2>
-
+                <h2>Monthly Plan</h2>
 
                 <div class="plan-field calculated">
 
@@ -912,9 +997,7 @@ td:first-child {
 
                 <div class="plan-field">
 
-                    <label>
-                        Revision 1
-                    </label>
+                    <label>Revision 1</label>
 
                     <input
                         id="monthlyR1"
@@ -929,9 +1012,7 @@ td:first-child {
 
                 <div class="plan-field">
 
-                    <label>
-                        Revision 2
-                    </label>
+                    <label>Revision 2</label>
 
                     <input
                         id="monthlyR2"
@@ -946,9 +1027,7 @@ td:first-child {
 
                 <div class="plan-field">
 
-                    <label>
-                        Revision 3
-                    </label>
+                    <label>Revision 3</label>
 
                     <input
                         id="monthlyR3"
@@ -965,8 +1044,6 @@ td:first-child {
         </div>
 
 
-        <!-- KEYS -->
-
         <div class="card keys-card">
 
             <h2 class="card-title">
@@ -976,7 +1053,6 @@ td:first-child {
             <div class="card-subtitle">
                 Keep your revision system simple.
             </div>
-
 
             <div class="keys">
 
@@ -1004,18 +1080,6 @@ td:first-child {
 
         </div>
 
-
-        <div class="bottom-actions">
-
-            <button
-                class="primary-btn"
-                onclick="openTracker()"
-            >
-                Open My Tracker
-            </button>
-
-        </div>
-
     </div>
 
 </section>
@@ -1028,6 +1092,34 @@ td:first-child {
 <section id="app" class="page">
 
     <div class="container">
+
+        <!-- MAIN NAVIGATION -->
+
+        <div class="main-navigation">
+
+            <button
+                class="main-nav-btn"
+                onclick="goHome()"
+            >
+                Home
+            </button>
+
+            <button
+                class="main-nav-btn"
+                onclick="goToPlans()"
+            >
+                Hifz Plan
+            </button>
+
+            <button
+                class="main-nav-btn active"
+                onclick="goToTracker()"
+            >
+                My Tracker
+            </button>
+
+        </div>
+
 
         <div class="header">
 
@@ -1042,13 +1134,12 @@ td:first-child {
         </div>
 
 
-        <!-- CLEAR TABS -->
+        <!-- TRACKER TABS -->
 
         <div class="tracker-navigation">
 
             <button
                 class="nav-btn active"
-                data-section="daily"
                 onclick="showAppSection('daily', this)"
             >
                 Daily
@@ -1056,7 +1147,6 @@ td:first-child {
 
             <button
                 class="nav-btn"
-                data-section="weekly"
                 onclick="showAppSection('weekly', this)"
             >
                 Weekly Progress
@@ -1064,7 +1154,6 @@ td:first-child {
 
             <button
                 class="nav-btn"
-                data-section="monthly"
                 onclick="showAppSection('monthly', this)"
             >
                 Monthly Tracker
@@ -1073,14 +1162,9 @@ td:first-child {
         </div>
 
 
-        <!-- =================================================
-             DAILY
-        ================================================= -->
+        <!-- ================= DAILY ================= -->
 
-        <div
-            id="daily"
-            class="app-section active"
-        >
+        <div id="daily" class="app-section active">
 
             <div class="card">
 
@@ -1115,24 +1199,20 @@ td:first-child {
                         <thead>
 
                             <tr>
-
                                 <th>Category</th>
                                 <th>Ayah Range</th>
                                 <th>Completed</th>
-                                <th>R1</th>
-                                <th>R2</th>
-                                <th>R3</th>
-
                             </tr>
 
                         </thead>
-
 
                         <tbody>
 
                             <tr>
 
-                                <td>New Hifz</td>
+                                <td>
+                                    New Hifz
+                                </td>
 
                                 <td>
                                     <input
@@ -1152,39 +1232,14 @@ td:first-child {
                                     >
                                 </td>
 
-                                <td>
-                                    <input
-                                        class="check"
-                                        type="checkbox"
-                                        id="newR1"
-                                        onchange="saveDaily(); updateDailyProgress()"
-                                    >
-                                </td>
-
-                                <td>
-                                    <input
-                                        class="check"
-                                        type="checkbox"
-                                        id="newR2"
-                                        onchange="saveDaily(); updateDailyProgress()"
-                                    >
-                                </td>
-
-                                <td>
-                                    <input
-                                        class="check"
-                                        type="checkbox"
-                                        id="newR3"
-                                        onchange="saveDaily(); updateDailyProgress()"
-                                    >
-                                </td>
-
                             </tr>
 
 
                             <tr>
 
-                                <td>Old Hifz</td>
+                                <td>
+                                    Old Hifz
+                                </td>
 
                                 <td>
                                     <input
@@ -1204,39 +1259,14 @@ td:first-child {
                                     >
                                 </td>
 
-                                <td>
-                                    <input
-                                        class="check"
-                                        type="checkbox"
-                                        id="oldR1"
-                                        onchange="saveDaily(); updateDailyProgress()"
-                                    >
-                                </td>
-
-                                <td>
-                                    <input
-                                        class="check"
-                                        type="checkbox"
-                                        id="oldR2"
-                                        onchange="saveDaily(); updateDailyProgress()"
-                                    >
-                                </td>
-
-                                <td>
-                                    <input
-                                        class="check"
-                                        type="checkbox"
-                                        id="oldR3"
-                                        onchange="saveDaily(); updateDailyProgress()"
-                                    >
-                                </td>
-
                             </tr>
 
 
                             <tr>
 
-                                <td>Recent Hifz</td>
+                                <td>
+                                    Recent Hifz
+                                </td>
 
                                 <td>
                                     <input
@@ -1256,39 +1286,14 @@ td:first-child {
                                     >
                                 </td>
 
-                                <td>
-                                    <input
-                                        class="check"
-                                        type="checkbox"
-                                        id="recentR1"
-                                        onchange="saveDaily(); updateDailyProgress()"
-                                    >
-                                </td>
-
-                                <td>
-                                    <input
-                                        class="check"
-                                        type="checkbox"
-                                        id="recentR2"
-                                        onchange="saveDaily(); updateDailyProgress()"
-                                    >
-                                </td>
-
-                                <td>
-                                    <input
-                                        class="check"
-                                        type="checkbox"
-                                        id="recentR3"
-                                        onchange="saveDaily(); updateDailyProgress()"
-                                    >
-                                </td>
-
                             </tr>
 
 
                             <tr>
 
-                                <td>Musāfahah / Tilawah</td>
+                                <td>
+                                    Musāfahah / Tilawah
+                                </td>
 
                                 <td>
                                     <input
@@ -1304,33 +1309,6 @@ td:first-child {
                                         class="check"
                                         type="checkbox"
                                         id="musafahahCompleted"
-                                        onchange="saveDaily(); updateDailyProgress()"
-                                    >
-                                </td>
-
-                                <td>
-                                    <input
-                                        class="check"
-                                        type="checkbox"
-                                        id="musafahahR1"
-                                        onchange="saveDaily(); updateDailyProgress()"
-                                    >
-                                </td>
-
-                                <td>
-                                    <input
-                                        class="check"
-                                        type="checkbox"
-                                        id="musafahahR2"
-                                        onchange="saveDaily(); updateDailyProgress()"
-                                    >
-                                </td>
-
-                                <td>
-                                    <input
-                                        class="check"
-                                        type="checkbox"
-                                        id="musafahahR3"
                                         onchange="saveDaily(); updateDailyProgress()"
                                     >
                                 </td>
@@ -1397,14 +1375,9 @@ td:first-child {
         </div>
 
 
-        <!-- =================================================
-             WEEKLY
-        ================================================= -->
+        <!-- ================= WEEKLY ================= -->
 
-        <div
-            id="weekly"
-            class="app-section"
-        >
+        <div id="weekly" class="app-section">
 
             <div class="card">
 
@@ -1416,12 +1389,10 @@ td:first-child {
                     Keep showing up throughout the week.
                 </div>
 
-
                 <div
                     id="weekDays"
                     class="week-days"
                 ></div>
-
 
                 <div class="progress-area">
 
@@ -1468,14 +1439,9 @@ td:first-child {
         </div>
 
 
-        <!-- =================================================
-             MONTHLY
-        ================================================= -->
+        <!-- ================= MONTHLY ================= -->
 
-        <div
-            id="monthly"
-            class="app-section"
-        >
+        <div id="monthly" class="app-section">
 
             <div class="card">
 
@@ -1487,7 +1453,6 @@ td:first-child {
                     Your daily tracker automatically reflects here.
                 </div>
 
-
                 <div class="monthly-table-wrapper">
 
                     <table class="monthly-table">
@@ -1495,14 +1460,12 @@ td:first-child {
                         <thead>
 
                             <tr>
-
                                 <th>Day</th>
                                 <th>Ayah Range</th>
                                 <th>Completed</th>
                                 <th>R1</th>
                                 <th>R2</th>
                                 <th>R3</th>
-
                             </tr>
 
                         </thead>
@@ -1556,20 +1519,16 @@ const defaultData = {
     name: "",
 
     plans: {
-
         pagesDay: "",
         pagesWeek: "",
         pagesMonth: "",
         hizbsWeek: "",
-
         weeklyR1: "",
         weeklyR2: "",
         weeklyR3: "",
-
         monthlyR1: "",
         monthlyR2: "",
         monthlyR3: ""
-
     },
 
     daily: {},
@@ -1585,8 +1544,6 @@ let trackerData =
     ) || defaultData;
 
 
-/* Make sure older saved versions don't break */
-
 trackerData.plans =
     Object.assign(
         {},
@@ -1597,10 +1554,6 @@ trackerData.plans =
 trackerData.daily =
     trackerData.daily || {};
 
-
-/* =====================================================
-   STORAGE
-===================================================== */
 
 function saveTracker() {
 
@@ -1613,7 +1566,7 @@ function saveTracker() {
 
 
 /* =====================================================
-   PAGE NAVIGATION
+   MAIN NAVIGATION
 ===================================================== */
 
 function hideAllPages() {
@@ -1621,15 +1574,46 @@ function hideAllPages() {
     document
         .querySelectorAll(".page")
         .forEach(page => {
-
             page.classList.remove("active");
+        });
+
+}
+
+
+function updateMainNavigation(activePage) {
+
+    document
+        .querySelectorAll(".main-nav-btn")
+        .forEach(button => {
+
+            button.classList.remove("active");
+
+        });
+
+
+    document
+        .querySelectorAll(
+            `.main-nav-btn[data-page="${activePage}"]`
+        )
+        .forEach(button => {
+
+            button.classList.add("active");
 
         });
 
 }
 
 
-function showNamePage() {
+/*
+   These functions are the actual navigation.
+
+   Home = intro/home page
+   Hifz Plan = plans page
+   My Tracker = tracker page
+*/
+
+
+function goHome() {
 
     hideAllPages();
 
@@ -1637,15 +1621,20 @@ function showNamePage() {
         .getElementById("intro")
         .classList.add("active");
 
-    document
-        .getElementById("userName")
-        .value =
-        trackerData.name || "";
+    const nameInput =
+        document.getElementById("userName");
+
+    if (nameInput) {
+
+        nameInput.value =
+            trackerData.name || "";
+
+    }
 
 }
 
 
-function showPlans() {
+function goToPlans() {
 
     saveName();
 
@@ -1660,7 +1649,7 @@ function showPlans() {
 }
 
 
-function openTracker() {
+function goToTracker() {
 
     savePlans();
 
@@ -1690,6 +1679,41 @@ function openTracker() {
     buildMonthly();
 
     loadWeeklyReflection();
+
+}
+
+
+/* =====================================================
+   FIRST WELCOME SCREEN
+===================================================== */
+
+function showNamePage() {
+
+    hideAllPages();
+
+    document
+        .getElementById("intro")
+        .classList.add("active");
+
+
+    document
+        .getElementById("userName")
+        .value =
+        trackerData.name || "";
+
+}
+
+
+function showPlans() {
+
+    goToPlans();
+
+}
+
+
+function openTracker() {
+
+    goToTracker();
 
 }
 
@@ -1770,9 +1794,7 @@ function calculatePlans() {
         trackerData.plans.hizbsWeek =
             hizbsWeek;
 
-    }
-
-    else {
+    } else {
 
         document
             .getElementById("pagesWeek")
@@ -1815,7 +1837,6 @@ function formatNumber(number) {
 function savePlans() {
 
     const fields = [
-
         "pagesDay",
         "weeklyR1",
         "weeklyR2",
@@ -1823,7 +1844,6 @@ function savePlans() {
         "monthlyR1",
         "monthlyR2",
         "monthlyR3"
-
     ];
 
 
@@ -1874,45 +1894,25 @@ function loadPlans() {
         trackerData.plans;
 
 
-    document
-        .getElementById("pagesDay")
-        .value =
+    document.getElementById("pagesDay").value =
         p.pagesDay || "";
 
-
-    document
-        .getElementById("weeklyR1")
-        .value =
+    document.getElementById("weeklyR1").value =
         p.weeklyR1 || "";
 
-
-    document
-        .getElementById("weeklyR2")
-        .value =
+    document.getElementById("weeklyR2").value =
         p.weeklyR2 || "";
 
-
-    document
-        .getElementById("weeklyR3")
-        .value =
+    document.getElementById("weeklyR3").value =
         p.weeklyR3 || "";
 
-
-    document
-        .getElementById("monthlyR1")
-        .value =
+    document.getElementById("monthlyR1").value =
         p.monthlyR1 || "";
 
-
-    document
-        .getElementById("monthlyR2")
-        .value =
+    document.getElementById("monthlyR2").value =
         p.monthlyR2 || "";
 
-
-    document
-        .getElementById("monthlyR3")
-        .value =
+    document.getElementById("monthlyR3").value =
         p.monthlyR3 || "";
 
 
@@ -1922,7 +1922,7 @@ function loadPlans() {
 
 
 /* =====================================================
-   APP TABS
+   TRACKER TABS
 ===================================================== */
 
 function showAppSection(
@@ -1966,16 +1966,12 @@ function showAppSection(
 
 
     if (sectionId === "weekly") {
-
         buildWeekly();
-
     }
 
 
     if (sectionId === "monthly") {
-
         buildMonthly();
-
     }
 
 }
@@ -1991,7 +1987,6 @@ function getTodayString() {
         new Date();
 
     return (
-
         date.getFullYear() +
         "-" +
         String(
@@ -2001,7 +1996,6 @@ function getTodayString() {
         String(
             date.getDate()
         ).padStart(2, "0")
-
     );
 
 }
@@ -2010,9 +2004,8 @@ function getTodayString() {
 function setToday() {
 
     const input =
-        document.getElementById(
-            "dailyDate"
-        );
+        document.getElementById("dailyDate");
+
 
     if (
         input &&
@@ -2071,82 +2064,19 @@ function getDailyObject() {
                 "newCompleted"
             ).checked,
 
-        newR1:
-            document.getElementById(
-                "newR1"
-            ).checked,
-
-        newR2:
-            document.getElementById(
-                "newR2"
-            ).checked,
-
-        newR3:
-            document.getElementById(
-                "newR3"
-            ).checked,
-
-
         oldCompleted:
             document.getElementById(
                 "oldCompleted"
             ).checked,
-
-        oldR1:
-            document.getElementById(
-                "oldR1"
-            ).checked,
-
-        oldR2:
-            document.getElementById(
-                "oldR2"
-            ).checked,
-
-        oldR3:
-            document.getElementById(
-                "oldR3"
-            ).checked,
-
 
         recentCompleted:
             document.getElementById(
                 "recentCompleted"
             ).checked,
 
-        recentR1:
-            document.getElementById(
-                "recentR1"
-            ).checked,
-
-        recentR2:
-            document.getElementById(
-                "recentR2"
-            ).checked,
-
-        recentR3:
-            document.getElementById(
-                "recentR3"
-            ).checked,
-
-
         musafahahCompleted:
             document.getElementById(
                 "musafahahCompleted"
-            ).checked,
-
-        musafahahR1:
-            document.getElementById(
-                "musafahahR1"
-            ).checked,
-
-        musafahahR2:
-            document.getElementById(
-                "musafahahR2"
-            ).checked,
-
-        musafahahR3:
-            document.getElementById(
-                "musafahahR3"
             ).checked,
 
 
@@ -2181,7 +2111,6 @@ function saveDaily() {
 
     saveTracker();
 
-
     updateDailyProgress();
 
     buildMonthly();
@@ -2205,13 +2134,11 @@ function loadDaily() {
 
 
     const textFields = [
-
         "newRange",
         "oldRange",
         "recentRange",
         "musafahahRange",
         "dailyNotes"
-
     ];
 
 
@@ -2219,6 +2146,7 @@ function loadDaily() {
 
         const element =
             document.getElementById(id);
+
 
         if (!element) return;
 
@@ -2228,9 +2156,7 @@ function loadDaily() {
             element.value =
                 data.notes || "";
 
-        }
-
-        else {
+        } else {
 
             element.value =
                 data[id] || "";
@@ -2241,27 +2167,10 @@ function loadDaily() {
 
 
     const checks = [
-
         "newCompleted",
-        "newR1",
-        "newR2",
-        "newR3",
-
         "oldCompleted",
-        "oldR1",
-        "oldR2",
-        "oldR3",
-
         "recentCompleted",
-        "recentR1",
-        "recentR2",
-        "recentR3",
-
-        "musafahahCompleted",
-        "musafahahR1",
-        "musafahahR2",
-        "musafahahR3"
-
+        "musafahahCompleted"
     ];
 
 
@@ -2269,6 +2178,7 @@ function loadDaily() {
 
         const element =
             document.getElementById(id);
+
 
         if (element) {
 
@@ -2288,27 +2198,10 @@ function loadDaily() {
 function updateDailyProgress() {
 
     const checks = [
-
         "newCompleted",
-        "newR1",
-        "newR2",
-        "newR3",
-
         "oldCompleted",
-        "oldR1",
-        "oldR2",
-        "oldR3",
-
         "recentCompleted",
-        "recentR1",
-        "recentR2",
-        "recentR3",
-
-        "musafahahCompleted",
-        "musafahahR1",
-        "musafahahR2",
-        "musafahahR3"
-
+        "musafahahCompleted"
     ];
 
 
@@ -2319,6 +2212,7 @@ function updateDailyProgress() {
 
         const element =
             document.getElementById(id);
+
 
         if (
             element &&
@@ -2341,17 +2235,13 @@ function updateDailyProgress() {
 
 
     document
-        .getElementById(
-            "dailyProgressFill"
-        )
+        .getElementById("dailyProgressFill")
         .style.width =
         percentage + "%";
 
 
     document
-        .getElementById(
-            "dailyProgressText"
-        )
+        .getElementById("dailyProgressText")
         .textContent =
         percentage +
         "% completed";
@@ -2399,7 +2289,6 @@ function completeDay() {
 function getDateKey(date) {
 
     return (
-
         date.getFullYear() +
         "-" +
         String(
@@ -2409,7 +2298,6 @@ function getDateKey(date) {
         String(
             date.getDate()
         ).padStart(2, "0")
-
     );
 
 }
@@ -2483,16 +2371,12 @@ function buildWeekly() {
 
 
         if (data.completedDay) {
-
             completedDays++;
-
         }
 
 
         const box =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
 
         box.className =
@@ -2526,7 +2410,9 @@ function buildWeekly() {
 
     const percentage =
         Math.round(
-            completedDays / 7 * 100
+            completedDays /
+            7 *
+            100
         );
 
 
@@ -2555,9 +2441,7 @@ function toggleWeeklyDay(
 ) {
 
     if (!trackerData.daily[date]) {
-
         trackerData.daily[date] = {};
-
     }
 
 
@@ -2619,38 +2503,30 @@ function getCombinedRanges(data) {
 
 
     if (data.newRange) {
-
         ranges.push(
             "N: " + data.newRange
         );
-
     }
 
 
     if (data.oldRange) {
-
         ranges.push(
             "O: " + data.oldRange
         );
-
     }
 
 
     if (data.recentRange) {
-
         ranges.push(
             "R: " + data.recentRange
         );
-
     }
 
 
     if (data.musafahahRange) {
-
         ranges.push(
             "M: " + data.musafahahRange
         );
-
     }
 
 
@@ -2662,12 +2538,10 @@ function getCombinedRanges(data) {
 function hasR1(data) {
 
     return Boolean(
-
         data.newR1 ||
         data.oldR1 ||
         data.recentR1 ||
         data.musafahahR1
-
     );
 
 }
@@ -2676,12 +2550,10 @@ function hasR1(data) {
 function hasR2(data) {
 
     return Boolean(
-
         data.newR2 ||
         data.oldR2 ||
         data.recentR2 ||
         data.musafahahR2
-
     );
 
 }
@@ -2690,12 +2562,10 @@ function hasR2(data) {
 function hasR3(data) {
 
     return Boolean(
-
         data.newR3 ||
         data.oldR3 ||
         data.recentR3 ||
         data.musafahahR3
-
     );
 
 }
@@ -2704,13 +2574,11 @@ function hasR3(data) {
 function hasCompleted(data) {
 
     return Boolean(
-
         data.completedDay ||
         data.newCompleted ||
         data.oldCompleted ||
         data.recentCompleted ||
         data.musafahahCompleted
-
     );
 
 }
@@ -2745,16 +2613,22 @@ function buildMonthly() {
     let completedDays = 0;
 
 
+    const daysInMonth =
+        new Date(
+            year,
+            month + 1,
+            0
+        ).getDate();
+
+
     for (
         let day = 1;
-        day <= 30;
+        day <= daysInMonth;
         day++
     ) {
 
         const key =
-            `${year}-${String(month + 1)
-                .padStart(2, "0")}-${String(day)
-                .padStart(2, "0")}`;
+            `${year}-${String(month + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
 
 
         const data =
@@ -2766,16 +2640,12 @@ function buildMonthly() {
 
 
         if (completed) {
-
             completedDays++;
-
         }
 
 
         const row =
-            document.createElement(
-                "tr"
-            );
+            document.createElement("tr");
 
 
         row.innerHTML = `
@@ -2805,7 +2675,7 @@ function buildMonthly() {
                     class="month-check"
                     type="checkbox"
                     ${hasR1(data) ? "checked" : ""}
-                    onchange="toggleMonthlyRevision('${key}', 'R1', this.checked)"
+                    onchange="toggleMonthlyRevision('${key}','R1',this.checked)"
                 >
 
             </td>
@@ -2816,7 +2686,7 @@ function buildMonthly() {
                     class="month-check"
                     type="checkbox"
                     ${hasR2(data) ? "checked" : ""}
-                    onchange="toggleMonthlyRevision('${key}', 'R2', this.checked)"
+                    onchange="toggleMonthlyRevision('${key}','R2',this.checked)"
                 >
 
             </td>
@@ -2827,7 +2697,7 @@ function buildMonthly() {
                     class="month-check"
                     type="checkbox"
                     ${hasR3(data) ? "checked" : ""}
-                    onchange="toggleMonthlyRevision('${key}', 'R3', this.checked)"
+                    onchange="toggleMonthlyRevision('${key}','R3',this.checked)"
                 >
 
             </td>
@@ -2842,7 +2712,9 @@ function buildMonthly() {
 
     const percentage =
         Math.round(
-            completedDays / 30 * 100
+            completedDays /
+            daysInMonth *
+            100
         );
 
 
@@ -2871,9 +2743,7 @@ function toggleMonthlyCompleted(
 ) {
 
     if (!trackerData.daily[date]) {
-
         trackerData.daily[date] = {};
-
     }
 
 
@@ -2882,7 +2752,6 @@ function toggleMonthlyCompleted(
 
 
     saveTracker();
-
 
     buildMonthly();
 
@@ -2898,33 +2767,25 @@ function toggleMonthlyRevision(
 ) {
 
     if (!trackerData.daily[date]) {
-
         trackerData.daily[date] = {};
-
     }
 
 
     if (revision === "R1") {
-
         trackerData.daily[date].newR1 =
             checked;
-
     }
 
 
     if (revision === "R2") {
-
         trackerData.daily[date].newR2 =
             checked;
-
     }
 
 
     if (revision === "R3") {
-
         trackerData.daily[date].newR3 =
             checked;
-
     }
 
 

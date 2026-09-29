@@ -1,0 +1,3099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quran Memorization Tracker</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial, Helvetica, sans-serif;
+  background:#f7f1e8;
+  color:#5b4636;
+  line-height:1.5;
+}
+
+button,input,textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.page{
+  display:none;
+  min-height:calc(100vh - 70px);
+  padding:45px 20px 70px;
+}
+
+.page.active{
+  display:block;
+}
+
+.container{
+  width:min(1000px,100%);
+  margin:auto;
+}
+
+/* NAVIGATION */
+
+.top-nav{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#fffdf9;
+  border-bottom:1px solid #eadfd2;
+  padding:14px 20px;
+}
+
+.nav-inner{
+  max-width:1000px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.logo{
+  font-size:12px;
+  letter-spacing:2px;
+  font-weight:bold;
+}
+
+.nav-links{
+  display:flex;
+  gap:7px;
+}
+
+.nav-links button{
+  border:none;
+  background:transparent;
+  color:#765f4c;
+  padding:9px 12px;
+  border-radius:10px;
+}
+
+.nav-links button:hover,
+.nav-links button.active{
+  background:#f1e6d9;
+}
+
+/* GENERAL */
+
+.card{
+  background:#fffdf9;
+  border:1px solid #eadfd2;
+  border-radius:20px;
+  padding:28px;
+  box-shadow:0 5px 20px rgba(85,65,45,.04);
+}
+
+h1,h2,h3{
+  color:#5a4434;
+}
+
+h2{
+  font-size:25px;
+  margin-bottom:8px;
+}
+
+.subtitle{
+  color:#8b7563;
+  margin-bottom:25px;
+}
+
+.eyebrow{
+  font-size:11px;
+  letter-spacing:2.5px;
+  font-weight:bold;
+  color:#92755c;
+}
+
+.primary-btn{
+  border:none;
+  background:#6e5643;
+  color:white;
+  padding:13px 22px;
+  border-radius:12px;
+  font-weight:bold;
+}
+
+.secondary-btn{
+  border:1px solid #d9cbbb;
+  background:#fffdf9;
+  color:#6e5643;
+  padding:12px 20px;
+  border-radius:12px;
+  font-weight:bold;
+}
+
+.primary-btn:hover,
+.secondary-btn:hover{
+  transform:translateY(-1px);
+}
+
+/* WELCOME */
+
+.welcome-box{
+  max-width:700px;
+  margin:80px auto;
+  text-align:center;
+}
+
+.bismillah{
+  font-size:30px;
+  margin:28px 0 18px;
+}
+
+.welcome-title{
+  font-size:52px;
+  margin-bottom:12px;
+}
+
+.welcome-subtitle{
+  color:#8a7565;
+  max-width:520px;
+  margin:0 auto 30px;
+}
+
+/* INTRO */
+
+.intro-grid{
+  display:grid;
+  grid-template-columns:1fr 1.4fr;
+  gap:25px;
+}
+
+.name-box input{
+  width:100%;
+  margin-top:10px;
+}
+
+.virtue{
+  padding:18px 0;
+  border-bottom:1px solid #eee4d9;
+}
+
+.virtue:last-child{
+  border-bottom:none;
+}
+
+.virtue-number{
+  font-size:11px;
+  letter-spacing:2px;
+  color:#a0836a;
+  margin-bottom:5px;
+}
+
+.virtue-text{
+  font-weight:bold;
+  font-size:13px;
+  letter-spacing:.4px;
+}
+
+.quote{
+  margin-top:9px;
+  font-size:13px;
+  font-style:italic;
+  color:#876e59;
+}
+
+.action-row{
+  margin-top:25px;
+  display:flex;
+  justify-content:flex-end;
+}
+
+/* INPUTS */
+
+input,
+textarea{
+  width:100%;
+  background:#fffdf9;
+  border:1px solid #ddcfc0;
+  border-radius:10px;
+  padding:11px 13px;
+  color:#5b4636;
+  outline:none;
+}
+
+input:focus,
+textarea:focus{
+  border-color:#a98b71;
+}
+
+textarea{
+  min-height:120px;
+  resize:vertical;
+}
+
+/* PLAN */
+
+.plan-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:25px;
+}
+
+.plan-section{
+  min-width:0;
+}
+
+.plan-field{
+  margin-top:18px;
+}
+
+.plan-field label{
+  display:block;
+  font-size:13px;
+  margin-bottom:7px;
+  font-weight:bold;
+}
+
+.calculated input{
+  background:#f4ede4;
+}
+
+.calculated-label{
+  color:#876b54;
+}
+
+.plan-result{
+  font-size:12px;
+  color:#8b7563;
+  margin-top:6px;
+}
+
+.keys{
+  margin-top:25px;
+}
+
+.key-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-top:20px;
+}
+
+.key{
+  background:#f7f0e7;
+  padding:17px;
+  border-radius:13px;
+  font-size:13px;
+}
+
+.key strong{
+  display:block;
+  font-size:17px;
+  margin-bottom:4px;
+}
+
+/* PERSONAL DASHBOARD */
+
+.dashboard{
+  display:grid;
+  grid-template-columns:1.5fr 1fr;
+  gap:20px;
+  margin-bottom:25px;
+}
+
+.greeting{
+  font-size:29px;
+  margin-bottom:5px;
+}
+
+.progress-number{
+  font-size:35px;
+  font-weight:bold;
+  margin:15px 0 5px;
+}
+
+.progress-bar{
+  height:10px;
+  background:#eadfd2;
+  border-radius:20px;
+  overflow:hidden;
+  margin:12px 0;
+}
+
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:#806650;
+  transition:.3s;
+}
+
+.small-text{
+  font-size:13px;
+  color:#8b7563;
+}
+
+.setup-actions{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:20px;
+}
+
+/* TRACKER NAV */
+
+.tracker-navigation{
+  display:flex;
+  gap:8px;
+  margin:25px 0;
+  overflow-x:auto;
+}
+
+.nav-btn{
+  white-space:nowrap;
+  border:1px solid #ddcfc0;
+  background:#fffdf9;
+  color:#725b48;
+  padding:11px 17px;
+  border-radius:11px;
+}
+
+.nav-btn.active{
+  background:#6e5643;
+  color:white;
+  border-color:#6e5643;
+}
+
+.app-section{
+  display:none;
+}
+
+.app-section.active{
+  display:block;
+}
+
+/* DAILY */
+
+.daily-date{
+  margin-bottom:20px;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:700px;
+}
+
+th,td{
+  padding:13px 10px;
+  border-bottom:1px solid #eee4d9;
+  text-align:left;
+  font-size:13px;
+}
+
+th{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:#8a705b;
+}
+
+td input[type="text"]{
+  min-width:150px;
+}
+
+.check{
+  width:19px;
+  height:19px;
+  accent-color:#765b45;
+}
+
+.progress-box{
+  margin:22px 0;
+  background:#f5eee6;
+  border-radius:14px;
+  padding:18px;
+}
+
+.progress-label{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  margin-bottom:8px;
+}
+
+.notes{
+  margin-top:25px;
+}
+
+.notes h3{
+  margin-bottom:9px;
+}
+
+.daily-actions{
+  margin-top:22px;
+  display:flex;
+  justify-content:flex-end;
+}
+
+/* WEEKLY */
+
+.week-days{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:9px;
+  margin:25px 0;
+}
+
+.week-day{
+  background:#f6eee5;
+  border:1px solid #e2d5c6;
+  border-radius:12px;
+  padding:16px 7px;
+  text-align:center;
+}
+
+.week-day.active{
+  background:#6e5643;
+  color:white;
+}
+
+.week-day .letter{
+  font-size:12px;
+  font-weight:bold;
+}
+
+.week-day .status{
+  font-size:20px;
+  margin-top:7px;
+}
+
+/* MONTHLY */
+
+.monthly-progress{
+  margin-bottom:20px;
+}
+
+.monthly-row-done{
+  background:#f4eee6;
+}
+
+.monthly-row-done td{
+  color:#67513e;
+}
+
+.monthly-check{
+  width:18px;
+  height:18px;
+  accent-color:#765b45;
+}
+
+/* MODAL / SETUP */
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(50,38,27,.35);
+  z-index:300;
+  padding:20px;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-card{
+  width:min(520px,100%);
+  background:#fffdf9;
+  border-radius:20px;
+  padding:30px;
+  border:1px solid #eadfd2;
+}
+
+.modal-card h2{
+  margin-bottom:8px;
+}
+
+.modal-field{
+  margin-top:17px;
+}
+
+.modal-field label{
+  display:block;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:7px;
+}
+
+.modal-actions{
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  margin-top:25px;
+}
+
+/* MOBILE */
+
+@media(max-width:750px){
+  .page{
+    padding:30px 14px 55px;
+  }
+
+  .nav-inner{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .nav-links{
+    width:100%;
+    overflow-x:auto;
+  }
+
+  .welcome-title{
+    font-size:38px;
+  }
+
+  .intro-grid,
+  .plan-layout,
+  .dashboard{
+    grid-template-columns:1fr;
+  }
+
+  .key-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .card{
+    padding:20px;
+  }
+
+  .week-days{
+    gap:5px;
+  }
+
+  .week-day{
+    padding:12px 3px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <div class="nav-inner">
+    <div class="logo">QURAN MEMORIZATION TRACKER</div>
+
+    <div class="nav-links">
+      <button onclick="showPage('welcome')">Home</button>
+      <button onclick="showPage('plans')">Hifz Plan</button>
+      <button onclick="openTracker()">My Tracker</button>
+    </div>
+  </div>
+</nav>
+
+
+<!-- WELCOME -->
+<section id="welcome" class="page active">
+
+  <div class="welcome-box">
+
+    <div class="eyebrow">QURAN MEMORIZATION TRACKER</div>
+
+    <div class="bismillah">
+      بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+    </div>
+
+    <h1 class="welcome-title">
+      Your Hifz Journey
+    </h1>
+
+    <p class="welcome-subtitle">
+      Track your memorisation, revision and consistency — one day at a time.
+    </p>
+
+    <button class="primary-btn" onclick="showPage('intro')">
+      Begin your journey
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- INTRO / NAME -->
+<section id="intro" class="page">
+
+  <div class="container">
+
+    <div class="intro-grid">
+
+      <div class="card name-box">
+
+        <div class="eyebrow">BEGIN YOUR JOURNEY</div>
+
+        <h2 style="margin-top:10px;">
+          A small step every day, bi idhnillah.
+        </h2>
+
+        <div style="margin-top:25px;">
+          <label><strong>Your Name</strong></label>
+          <p class="small-text">
+            This will appear on your tracker.
+          </p>
+
+          <input
+            id="userName"
+            type="text"
+            placeholder="Enter your name"
+          >
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="eyebrow">VIRTUES OF THE QUR'AN</div>
+
+        <div class="virtue">
+          <div class="virtue-number">01</div>
+          <div class="virtue-text">
+            RECITING THE QUR’ĀN MAKES YOU ALLAH’S CHOSEN PEOPLE.
+          </div>
+        </div>
+
+        <div class="virtue">
+          <div class="virtue-number">02</div>
+          <div class="virtue-text">
+            THE QUR’ĀN GUIDES, HEALS, AND LIGHTS YOUR PATH.
+          </div>
+
+          <div class="quote">
+            “THE BEST OF YOU ARE THOSE WHO LEARN THE QUR’AN AND TEACH IT.”
+            (BUKHARI)
+          </div>
+        </div>
+
+        <div class="virtue">
+          <div class="virtue-number">03</div>
+          <div class="virtue-text">
+            RAISES YOUR STATUS IN JANNAH. ELEVATES YOU AND REWARDS YOUR FAMILY.
+          </div>
+        </div>
+
+        <div class="virtue">
+          <div class="virtue-number">04</div>
+          <div class="virtue-text">
+            INTERCEDES FOR YOU ON THE DAY OF JUDGMENT.
+          </div>
+        </div>
+
+        <div class="virtue">
+          <div class="virtue-number">05</div>
+          <div class="virtue-text">
+            SOFTENS AND PURIFIES THE HEART
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="action-row">
+      <button class="primary-btn" onclick="saveNameAndContinue()">
+        Continue
+      </button>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- PLANS -->
+<section id="plans" class="page">
+
+  <div class="container">
+
+    <div class="card">
+
+      <div class="eyebrow">YOUR HIFZ PLAN</div>
+
+      <h2 style="margin-top:10px;">
+        Set your targets
+      </h2>
+
+      <p class="subtitle">
+        Set your daily targets and let your tracker calculate the weekly and monthly targets.
+      </p>
+
+
+      <div class="plan-layout">
+
+        <!-- DAILY -->
+        <div class="plan-section">
+
+          <h2>Daily Plan</h2>
+
+          <div class="plan-field">
+
+            <label>New Hifz — Pages per day</label>
+
+            <input
+              id="pagesDay"
+              type="number"
+              min="0"
+              step="0.1"
+              placeholder="e.g. 1"
+              oninput="calculatePlans()"
+            >
+
+          </div>
+
+
+          <div class="plan-field">
+
+            <label>Revision 1 — Pages per day</label>
+
+            <input
+              id="dailyR1"
+              type="number"
+              min="0"
+              step="0.1"
+              placeholder="e.g. 2"
+              oninput="calculatePlans()"
+            >
+
+          </div>
+
+
+          <div class="plan-field">
+
+            <label>Revision 2 — Pages per day</label>
+
+            <input
+              id="dailyR2"
+              type="number"
+              min="0"
+              step="0.1"
+              placeholder="e.g. 2"
+              oninput="calculatePlans()"
+            >
+
+          </div>
+
+
+          <div class="plan-field">
+
+            <label>Revision 3 — Pages per day</label>
+
+            <input
+              id="dailyR3"
+              type="number"
+              min="0"
+              step="0.1"
+              placeholder="e.g. 10"
+              oninput="calculatePlans()"
+            >
+
+          </div>
+
+        </div>
+
+
+        <!-- WEEKLY -->
+        <div class="plan-section">
+
+          <h2>Weekly Plan</h2>
+
+          <div class="plan-field calculated">
+
+            <label class="calculated-label">
+              New Hifz — Pages per week
+            </label>
+
+            <input
+              id="pagesWeek"
+              readonly
+              placeholder="—"
+            >
+
+            <div
+              id="pagesWeekHizb"
+              class="plan-result"
+            >
+              —
+            </div>
+
+          </div>
+
+
+          <div class="plan-field calculated">
+
+            <label class="calculated-label">
+              Revision 1 — Pages per week
+            </label>
+
+            <input
+              id="weeklyR1"
+              readonly
+              placeholder="—"
+            >
+
+            <div
+              id="weeklyR1Hizb"
+              class="plan-result"
+            >
+              —
+            </div>
+
+          </div>
+
+
+          <div class="plan-field calculated">
+
+            <label class="calculated-label">
+              Revision 2 — Pages per week
+            </label>
+
+            <input
+              id="weeklyR2"
+              readonly
+              placeholder="—"
+            >
+
+            <div
+              id="weeklyR2Hizb"
+              class="plan-result"
+            >
+              —
+            </div>
+
+          </div>
+
+
+          <div class="plan-field calculated">
+
+            <label class="calculated-label">
+              Revision 3 — Pages per week
+            </label>
+
+            <input
+              id="weeklyR3"
+              readonly
+              placeholder="—"
+            >
+
+            <div
+              id="weeklyR3Hizb"
+              class="plan-result"
+            >
+              —
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- MONTHLY -->
+        <div class="plan-section">
+
+          <h2>Monthly Plan</h2>
+
+          <div class="plan-field calculated">
+
+            <label class="calculated-label">
+              New Hifz — Pages per month
+            </label>
+
+            <input
+              id="pagesMonth"
+              readonly
+              placeholder="—"
+            >
+
+            <div
+              id="pagesMonthHizb"
+              class="plan-result"
+            >
+              —
+            </div>
+
+          </div>
+
+
+          <div class="plan-field calculated">
+
+            <label class="calculated-label">
+              Revision 1 — Pages per month
+            </label>
+
+            <input
+              id="monthlyR1"
+              readonly
+              placeholder="—"
+            >
+
+            <div
+              id="monthlyR1Hizb"
+              class="plan-result"
+            >
+              —
+            </div>
+
+          </div>
+
+
+          <div class="plan-field calculated">
+
+            <label class="calculated-label">
+              Revision 2 — Pages per month
+            </label>
+
+            <input
+              id="monthlyR2"
+              readonly
+              placeholder="—"
+            >
+
+            <div
+              id="monthlyR2Hizb"
+              class="plan-result"
+            >
+              —
+            </div>
+
+          </div>
+
+
+          <div class="plan-field calculated">
+
+            <label class="calculated-label">
+              Revision 3 — Pages per month
+            </label>
+
+            <input
+              id="monthlyR3"
+              readonly
+              placeholder="—"
+            >
+
+            <div
+              id="monthlyR3Hizb"
+              class="plan-result"
+            >
+              —
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- KEYS -->
+      <div class="keys">
+
+        <h2>Keys</h2>
+
+        <p class="subtitle">
+          Keep your revision system simple.
+        </p>
+
+        <div class="key-grid">
+
+          <div class="key">
+            <strong>N</strong>
+            New Hifz
+          </div>
+
+          <div class="key">
+            <strong>R1</strong>
+            Old Hifz
+          </div>
+
+          <div class="key">
+            <strong>R2</strong>
+            Recent Hifz
+          </div>
+
+          <div class="key">
+            <strong>R3</strong>
+            Musāfahah / Tilawah
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="action-row">
+
+        <button
+          class="primary-btn"
+          onclick="openTracker()"
+        >
+          Open My Tracker
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- TRACKER -->
+<section id="tracker" class="page">
+
+  <div class="container">
+
+    <!-- PERSONAL DASHBOARD -->
+    <div class="dashboard">
+
+      <div class="card">
+
+        <div class="eyebrow">YOUR HIFZ JOURNEY</div>
+
+        <div class="greeting">
+          Assalamu alaykum, <span id="displayName">Zainab</span> 🤍
+        </div>
+
+        <p class="small-text">
+          One day at a time, in shā’ Allāh.
+        </p>
+
+        <div class="progress-number">
+          <span id="currentHizb">33</span> / <span id="targetHizb">60</span> Hizbs
+        </div>
+
+        <div class="progress-bar">
+          <div id="hifzProgressFill" class="progress-fill"></div>
+        </div>
+
+        <div class="small-text">
+          <span id="hifzPercentage">55</span>% of your Hifz goal
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="eyebrow">YOUR PLAN</div>
+
+        <h3 style="margin-top:10px;">
+          Daily Target
+        </h3>
+
+        <div class="progress-number" style="font-size:28px;">
+          <span id="dashboardPages">—</span>
+        </div>
+
+        <p class="small-text">
+          pages per day
+        </p>
+
+        <div style="margin-top:20px;">
+          <p class="small-text">
+            Weekly target
+          </p>
+
+          <strong id="dashboardWeekly">—</strong> pages
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="setup-actions">
+      <button class="secondary-btn" onclick="openSetupModal()">
+        Edit My Journey
+      </button>
+    </div>
+
+
+    <!-- TRACKER TABS -->
+    <div class="tracker-navigation">
+
+      <button
+        class="nav-btn active"
+        data-section="daily"
+        onclick="showAppSection('daily',this)"
+      >
+        Daily
+      </button>
+
+      <button
+        class="nav-btn"
+        data-section="weekly"
+        onclick="showAppSection('weekly',this)"
+      >
+        Weekly Progress
+      </button>
+
+      <button
+        class="nav-btn"
+        data-section="monthly"
+        onclick="showAppSection('monthly',this)"
+      >
+        Monthly Tracker
+      </button>
+
+    </div>
+
+
+    <!-- DAILY -->
+    <div id="daily" class="app-section active">
+
+      <div class="card">
+
+        <div class="eyebrow">DAILY HIFZ</div>
+
+        <h2 style="margin-top:8px;">
+          Record today's memorisation and revision.
+        </h2>
+
+        <div class="daily-date">
+
+          <label class="small-text">
+            Date
+          </label>
+
+          <input
+            id="dailyDate"
+            type="date"
+            onchange="loadDaily()"
+          >
+
+        </div>
+
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Category</th>
+                <th>Ayah Range</th>
+                <th>Completed</th>
+                <th>R1</th>
+                <th>R2</th>
+                <th>R3</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr>
+
+                <td><strong>New Hifz</strong></td>
+
+                <td>
+                  <input
+                    id="newRange"
+                    type="text"
+                    placeholder="e.g. 1–10"
+                    oninput="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="newCompleted"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="newR1"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="newR2"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="newR3"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td><strong>Old Hifz</strong></td>
+
+                <td>
+                  <input
+                    id="oldRange"
+                    type="text"
+                    placeholder="Ayah range"
+                    oninput="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="oldCompleted"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="oldR1"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="oldR2"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="oldR3"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td><strong>Recent Hifz</strong></td>
+
+                <td>
+                  <input
+                    id="recentRange"
+                    type="text"
+                    placeholder="Ayah range"
+                    oninput="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="recentCompleted"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="recentR1"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="recentR2"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="recentR3"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td><strong>Musāfahah / Tilawah</strong></td>
+
+                <td>
+                  <input
+                    id="musaRange"
+                    type="text"
+                    placeholder="e.g. Juz 1"
+                    oninput="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="musaCompleted"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="musaR1"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="musaR2"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+                <td>
+                  <input
+                    id="musaR3"
+                    class="check"
+                    type="checkbox"
+                    onchange="saveDaily()"
+                  >
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+
+        <div class="progress-box">
+
+          <div class="progress-label">
+            <span>Daily progress</span>
+            <strong id="dailyPercentage">0%</strong>
+          </div>
+
+          <div class="progress-bar">
+            <div
+              id="dailyProgressFill"
+              class="progress-fill"
+            ></div>
+          </div>
+
+        </div>
+
+
+        <div class="notes">
+
+          <h3>Notes / Reflections</h3>
+
+          <p class="small-text" style="margin-bottom:9px;">
+            Write anything you want to remember from today.
+          </p>
+
+          <textarea
+            id="dailyNotes"
+            placeholder="How did today's Hifz go?"
+            oninput="saveDaily()"
+          ></textarea>
+
+        </div>
+
+
+        <div class="daily-actions">
+
+          <button
+            class="primary-btn"
+            onclick="completeDay()"
+          >
+            Mark Day Complete
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- WEEKLY -->
+    <div id="weekly" class="app-section">
+
+      <div class="card">
+
+        <div class="eyebrow">WEEKLY PROGRESS</div>
+
+        <h2 style="margin-top:8px;">
+          Keep showing up throughout the week.
+        </h2>
+
+        <div class="week-days">
+
+          <div class="week-day" id="week-0" onclick="toggleWeeklyDay(0)">
+            <div class="letter">M</div>
+            <div class="status">○</div>
+          </div>
+
+          <div class="week-day" id="week-1" onclick="toggleWeeklyDay(1)">
+            <div class="letter">T</div>
+            <div class="status">○</div>
+          </div>
+
+          <div class="week-day" id="week-2" onclick="toggleWeeklyDay(2)">
+            <div class="letter">W</div>
+            <div class="status">○</div>
+          </div>
+
+          <div class="week-day" id="week-3" onclick="toggleWeeklyDay(3)">
+            <div class="letter">T</div>
+            <div class="status">○</div>
+          </div>
+
+          <div class="week-day" id="week-4" onclick="toggleWeeklyDay(4)">
+            <div class="letter">F</div>
+            <div class="status">○</div>
+          </div>
+
+          <div class="week-day" id="week-5" onclick="toggleWeeklyDay(5)">
+            <div class="letter">S</div>
+            <div class="status">○</div>
+          </div>
+
+          <div class="week-day" id="week-6" onclick="toggleWeeklyDay(6)">
+            <div class="letter">S</div>
+            <div class="status">○</div>
+          </div>
+
+        </div>
+
+
+        <div class="progress-box">
+
+          <div class="progress-label">
+            <span>Weekly completion</span>
+            <strong id="weeklyPercentage">0%</strong>
+          </div>
+
+          <div class="progress-bar">
+
+            <div
+              id="weeklyProgressFill"
+              class="progress-fill"
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <div class="notes">
+
+          <h3>Weekly Reflection</h3>
+
+          <p class="small-text" style="margin-bottom:9px;">
+            What went well? What can you improve next week?
+          </p>
+
+          <textarea
+            id="weeklyReflection"
+            placeholder="Write your reflection..."
+            oninput="saveWeeklyReflection()"
+          ></textarea>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- MONTHLY -->
+    <div id="monthly" class="app-section">
+
+      <div class="card">
+
+        <div class="eyebrow">MONTHLY TRACKER</div>
+
+        <h2 style="margin-top:8px;">
+          Your daily tracker automatically reflects here.
+        </h2>
+
+        <div class="progress-box monthly-progress">
+
+          <div class="progress-label">
+            <span>Monthly completion</span>
+            <strong id="monthlyPercentage">0%</strong>
+          </div>
+
+          <div class="progress-bar">
+
+            <div
+              id="monthlyProgressFill"
+              class="progress-fill"
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Day</th>
+                <th>Ayah Range</th>
+                <th>Completed</th>
+                <th>R1</th>
+                <th>R2</th>
+                <th>R3</th>
+              </tr>
+
+            </thead>
+
+            <tbody id="monthlyBody"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- PERSONAL SETUP MODAL -->
+<div id="setupModal" class="modal">
+
+  <div class="modal-card">
+
+    <div class="eyebrow">PERSONALIZE YOUR JOURNEY</div>
+
+    <h2 style="margin-top:8px;">
+      Your Hifz Setup
+    </h2>
+
+    <p class="small-text">
+      You can change these anytime.
+    </p>
+
+
+    <div class="modal-field">
+
+      <label>Your Name</label>
+
+      <input
+        id="setupName"
+        type="text"
+        placeholder="Your name"
+      >
+
+    </div>
+
+
+    <div class="modal-field">
+
+      <label>Hizbs already memorised</label>
+
+      <input
+        id="setupCurrentHizb"
+        type="number"
+        min="0"
+        max="60"
+        step="0.1"
+      >
+
+    </div>
+
+
+    <div class="modal-field">
+
+      <label>Hifz Goal</label>
+
+      <input
+        id="setupTargetHizb"
+        type="number"
+        min="1"
+        max="60"
+        step="0.1"
+      >
+
+    </div>
+
+
+    <div class="modal-actions">
+
+      <button
+        class="secondary-btn"
+        onclick="closeSetupModal()"
+      >
+        Cancel
+      </button>
+
+      <button
+        class="primary-btn"
+        onclick="savePersonalSetup()"
+      >
+        Save My Journey
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   PERSONAL DATA
+========================================================= */
+
+const STORAGE_KEY = "quranTrakPersonalData_v2";
+
+let appData = {
+  profile:{
+    name:"",
+    currentHizb:33,
+    targetHizb:60
+  },
+
+  plans:{
+    pagesDay:"",
+    pagesWeek:"",
+    pagesMonth:"",
+    hizbsWeek:"",
+
+    dailyR1:"",
+    dailyR2:"",
+    dailyR3:"",
+
+    weeklyR1:"",
+    weeklyR2:"",
+    weeklyR3:"",
+
+    monthlyR1:"",
+    monthlyR2:"",
+    monthlyR3:""
+  },
+
+  daily:{},
+
+  weekly:{
+    days:[false,false,false,false,false,false,false],
+    reflection:""
+  }
+};
+
+
+/* =========================================================
+   LOAD / SAVE
+========================================================= */
+
+function loadAppData(){
+
+  const saved = localStorage.getItem(STORAGE_KEY);
+
+  if(saved){
+
+    try{
+
+      const parsed = JSON.parse(saved);
+
+      appData = {
+        ...appData,
+        ...parsed,
+
+        profile:{
+          ...appData.profile,
+          ...(parsed.profile || {})
+        },
+
+        plans:{
+          ...appData.plans,
+          ...(parsed.plans || {})
+        },
+
+        weekly:{
+          ...appData.weekly,
+          ...(parsed.weekly || {})
+        }
+
+      };
+
+    }catch(error){
+
+      console.log("Could not load saved data.");
+
+    }
+
+  }
+
+}
+
+
+function saveAppData(){
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(appData)
+  );
+
+}
+
+
+/* =========================================================
+   PAGE NAVIGATION
+========================================================= */
+
+function showPage(pageId){
+
+  document.querySelectorAll(".page").forEach(page=>{
+    page.classList.remove("active");
+  });
+
+  const page =
+    document.getElementById(pageId);
+
+  if(page){
+    page.classList.add("active");
+  }
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+  if(pageId === "intro"){
+
+    document.getElementById("userName").value =
+      appData.profile.name || "";
+
+  }
+
+  if(pageId === "plans"){
+
+    loadPlans();
+
+  }
+
+  if(pageId === "tracker"){
+
+    updateDashboard();
+
+  }
+
+}
+
+
+function showNamePage(){
+
+  showPage("intro");
+
+}
+
+
+function saveNameAndContinue(){
+
+  const name =
+    document.getElementById("userName").value.trim();
+
+  if(name){
+
+    appData.profile.name = name;
+
+    saveAppData();
+
+  }
+
+  showPage("plans");
+
+}
+
+
+/* =========================================================
+   HIFZ PLAN
+   DAILY → WEEKLY × 6 → MONTHLY × 4
+   10 PAGES = 1 HIZB
+========================================================= */
+
+function formatNumber(number){
+
+  if(number === "" || number === null || number === undefined){
+    return "";
+  }
+
+  const value = Number(number);
+
+  if(!isFinite(value)){
+    return "";
+  }
+
+  return Number.isInteger(value)
+    ? value
+    : Number(value.toFixed(1));
+
+}
+
+
+function hizbText(pages){
+
+  if(pages === "" || pages === null || pages === undefined){
+    return "—";
+  }
+
+  const number =
+    Number(pages);
+
+  if(!isFinite(number) || number <= 0){
+    return "—";
+  }
+
+  const hizbs =
+    number / 10;
+
+  const formatted =
+    Number.isInteger(hizbs)
+      ? hizbs
+      : Number(hizbs.toFixed(1));
+
+  return `${formatNumber(number)} pages (${formatted} Hizb${formatted === 1 ? "" : "s"})`;
+
+}
+
+
+function calculatePlans(){
+
+  const pages =
+    parseFloat(
+      document.getElementById("pagesDay").value
+    );
+
+  const dailyR1 =
+    parseFloat(
+      document.getElementById("dailyR1").value
+    );
+
+  const dailyR2 =
+    parseFloat(
+      document.getElementById("dailyR2").value
+    );
+
+  const dailyR3 =
+    parseFloat(
+      document.getElementById("dailyR3").value
+    );
+
+
+  /*
+    NEW HIFZ
+
+    Daily × 6 = Weekly
+    Weekly × 4 = Monthly
+  */
+
+  if(!isNaN(pages) && pages > 0){
+
+    const week =
+      pages * 6;
+
+    const month =
+      week * 4;
+
+    const hizbsWeek =
+      week / 10;
+
+    document.getElementById("pagesWeek").value =
+      formatNumber(week);
+
+    document.getElementById("pagesMonth").value =
+      formatNumber(month);
+
+    document.getElementById("pagesWeekHizb").textContent =
+      hizbText(week);
+
+    document.getElementById("pagesMonthHizb").textContent =
+      hizbText(month);
+
+    appData.plans.pagesDay =
+      pages;
+
+    appData.plans.pagesWeek =
+      week;
+
+    appData.plans.pagesMonth =
+      month;
+
+    appData.plans.hizbsWeek =
+      hizbsWeek;
+
+  }else{
+
+    document.getElementById("pagesWeek").value = "";
+
+    document.getElementById("pagesMonth").value = "";
+
+    document.getElementById("pagesWeekHizb").textContent =
+      "—";
+
+    document.getElementById("pagesMonthHizb").textContent =
+      "—";
+
+    appData.plans.pagesDay = "";
+
+    appData.plans.pagesWeek = "";
+
+    appData.plans.pagesMonth = "";
+
+    appData.plans.hizbsWeek = "";
+
+  }
+
+
+  /*
+    REVISION 1
+  */
+
+  calculateRevisionPlan(
+    dailyR1,
+    "weeklyR1",
+    "monthlyR1",
+    "weeklyR1Hizb",
+    "monthlyR1Hizb"
+  );
+
+
+  /*
+    REVISION 2
+  */
+
+  calculateRevisionPlan(
+    dailyR2,
+    "weeklyR2",
+    "monthlyR2",
+    "weeklyR2Hizb",
+    "monthlyR2Hizb"
+  );
+
+
+  /*
+    REVISION 3
+  */
+
+  calculateRevisionPlan(
+    dailyR3,
+    "weeklyR3",
+    "monthlyR3",
+    "weeklyR3Hizb",
+    "monthlyR3Hizb"
+  );
+
+
+  savePlans();
+
+  updateDashboard();
+
+}
+
+
+function calculateRevisionPlan(
+  dailyValue,
+  weeklyId,
+  monthlyId,
+  weeklyHizbId,
+  monthlyHizbId
+){
+
+  const weeklyElement =
+    document.getElementById(weeklyId);
+
+  const monthlyElement =
+    document.getElementById(monthlyId);
+
+  const weeklyHizbElement =
+    document.getElementById(weeklyHizbId);
+
+  const monthlyHizbElement =
+    document.getElementById(monthlyHizbId);
+
+
+  if(!isNaN(dailyValue) && dailyValue > 0){
+
+    const weekly =
+      dailyValue * 6;
+
+    const monthly =
+      weekly * 4;
+
+
+    weeklyElement.value =
+      formatNumber(weekly);
+
+    monthlyElement.value =
+      formatNumber(monthly);
+
+
+    weeklyHizbElement.textContent =
+      hizbText(weekly);
+
+    monthlyHizbElement.textContent =
+      hizbText(monthly);
+
+
+  }else{
+
+    weeklyElement.value = "";
+
+    monthlyElement.value = "";
+
+    weeklyHizbElement.textContent =
+      "—";
+
+    monthlyHizbElement.textContent =
+      "—";
+
+  }
+
+}
+
+
+function savePlans(){
+
+  const pages =
+    parseFloat(
+      document.getElementById("pagesDay").value
+    );
+
+  const dailyR1 =
+    parseFloat(
+      document.getElementById("dailyR1").value
+    );
+
+  const dailyR2 =
+    parseFloat(
+      document.getElementById("dailyR2").value
+    );
+
+  const dailyR3 =
+    parseFloat(
+      document.getElementById("dailyR3").value
+    );
+
+
+  /*
+    New Hifz
+  */
+
+  if(!isNaN(pages) && pages > 0){
+
+    appData.plans.pagesDay =
+      pages;
+
+    appData.plans.pagesWeek =
+      pages * 6;
+
+    appData.plans.pagesMonth =
+      pages * 6 * 4;
+
+    appData.plans.hizbsWeek =
+      (pages * 6) / 10;
+
+  }else{
+
+    appData.plans.pagesDay = "";
+
+    appData.plans.pagesWeek = "";
+
+    appData.plans.pagesMonth = "";
+
+    appData.plans.hizbsWeek = "";
+
+  }
+
+
+  /*
+    Daily revision targets
+  */
+
+  appData.plans.dailyR1 =
+    !isNaN(dailyR1) && dailyR1 > 0
+      ? dailyR1
+      : "";
+
+  appData.plans.dailyR2 =
+    !isNaN(dailyR2) && dailyR2 > 0
+      ? dailyR2
+      : "";
+
+  appData.plans.dailyR3 =
+    !isNaN(dailyR3) && dailyR3 > 0
+      ? dailyR3
+      : "";
+
+
+  /*
+    Weekly revision targets
+  */
+
+  appData.plans.weeklyR1 =
+    !isNaN(dailyR1) && dailyR1 > 0
+      ? dailyR1 * 6
+      : "";
+
+  appData.plans.weeklyR2 =
+    !isNaN(dailyR2) && dailyR2 > 0
+      ? dailyR2 * 6
+      : "";
+
+  appData.plans.weeklyR3 =
+    !isNaN(dailyR3) && dailyR3 > 0
+      ? dailyR3 * 6
+      : "";
+
+
+  /*
+    Monthly revision targets
+  */
+
+  appData.plans.monthlyR1 =
+    !isNaN(dailyR1) && dailyR1 > 0
+      ? dailyR1 * 6 * 4
+      : "";
+
+  appData.plans.monthlyR2 =
+    !isNaN(dailyR2) && dailyR2 > 0
+      ? dailyR2 * 6 * 4
+      : "";
+
+  appData.plans.monthlyR3 =
+    !isNaN(dailyR3) && dailyR3 > 0
+      ? dailyR3 * 6 * 4
+      : "";
+
+
+  saveAppData();
+
+}
+
+
+function loadPlans(){
+
+  document.getElementById("pagesDay").value =
+    appData.plans.pagesDay || "";
+
+
+  document.getElementById("dailyR1").value =
+    appData.plans.dailyR1 || "";
+
+  document.getElementById("dailyR2").value =
+    appData.plans.dailyR2 || "";
+
+  document.getElementById("dailyR3").value =
+    appData.plans.dailyR3 || "";
+
+
+  calculatePlans();
+
+}
+
+
+/* =========================================================
+   TRACKER OPEN
+========================================================= */
+
+function openTracker(){
+
+  savePlans();
+
+  showPage("tracker");
+
+  showAppSection("daily");
+
+  updateDashboard();
+
+  loadDaily();
+
+  buildWeekly();
+
+  loadWeeklyReflection();
+
+  buildMonthly();
+
+}
+
+
+/* =========================================================
+   TRACKER TABS
+========================================================= */
+
+function showAppSection(sectionId, button=null){
+
+  document.querySelectorAll(".app-section").forEach(section=>{
+    section.classList.remove("active");
+  });
+
+  const section =
+    document.getElementById(sectionId);
+
+  if(section){
+    section.classList.add("active");
+  }
+
+  document.querySelectorAll(".nav-btn").forEach(btn=>{
+    btn.classList.remove("active");
+  });
+
+  if(button){
+
+    button.classList.add("active");
+
+  }else{
+
+    const matching =
+      document.querySelector(
+        `.nav-btn[data-section="${sectionId}"]`
+      );
+
+    if(matching){
+      matching.classList.add("active");
+    }
+
+  }
+
+  if(sectionId === "weekly"){
+    buildWeekly();
+  }
+
+  if(sectionId === "monthly"){
+    buildMonthly();
+  }
+
+}
+
+
+/* =========================================================
+   PERSONAL DASHBOARD
+========================================================= */
+
+function updateDashboard(){
+
+  const name =
+    appData.profile.name || "Zainab";
+
+  const current =
+    Number(appData.profile.currentHizb) || 0;
+
+  const target =
+    Number(appData.profile.targetHizb) || 60;
+
+  let percentage =
+    target > 0
+      ? (current / target) * 100
+      : 0;
+
+  percentage =
+    Math.min(100,Math.max(0,percentage));
+
+  document.getElementById("displayName").textContent =
+    name;
+
+  document.getElementById("currentHizb").textContent =
+    current;
+
+  document.getElementById("targetHizb").textContent =
+    target;
+
+  document.getElementById("hifzPercentage").textContent =
+    Math.round(percentage);
+
+  document.getElementById("hifzProgressFill").style.width =
+    percentage + "%";
+
+  document.getElementById("dashboardPages").textContent =
+    appData.plans.pagesDay || "—";
+
+  document.getElementById("dashboardWeekly").textContent =
+    appData.plans.pagesWeek || "—";
+
+}
+
+
+/* =========================================================
+   DAILY
+========================================================= */
+
+function todayString(){
+
+  const now = new Date();
+
+  const year =
+    now.getFullYear();
+
+  const month =
+    String(now.getMonth()+1).padStart(2,"0");
+
+  const day =
+    String(now.getDate()).padStart(2,"0");
+
+  return `${year}-${month}-${day}`;
+
+}
+
+
+function getDailyData(){
+
+  return {
+
+    newRange:
+      document.getElementById("newRange").value,
+
+    newCompleted:
+      document.getElementById("newCompleted").checked,
+
+    newR1:
+      document.getElementById("newR1").checked,
+
+    newR2:
+      document.getElementById("newR2").checked,
+
+    newR3:
+      document.getElementById("newR3").checked,
+
+
+    oldRange:
+      document.getElementById("oldRange").value,
+
+    oldCompleted:
+      document.getElementById("oldCompleted").checked,
+
+    oldR1:
+      document.getElementById("oldR1").checked,
+
+    oldR2:
+      document.getElementById("oldR2").checked,
+
+    oldR3:
+      document.getElementById("oldR3").checked,
+
+
+    recentRange:
+      document.getElementById("recentRange").value,
+
+    recentCompleted:
+      document.getElementById("recentCompleted").checked,
+
+    recentR1:
+      document.getElementById("recentR1").checked,
+
+    recentR2:
+      document.getElementById("recentR2").checked,
+
+    recentR3:
+      document.getElementById("recentR3").checked,
+
+
+    musaRange:
+      document.getElementById("musaRange").value,
+
+    musaCompleted:
+      document.getElementById("musaCompleted").checked,
+
+    musaR1:
+      document.getElementById("musaR1").checked,
+
+    musaR2:
+      document.getElementById("musaR2").checked,
+
+    musaR3:
+      document.getElementById("musaR3").checked,
+
+
+    notes:
+      document.getElementById("dailyNotes").value,
+
+    completedDay:
+      appData.daily[
+        document.getElementById("dailyDate").value
+      ]?.completedDay || false
+
+  };
+
+}
+
+
+function saveDaily(){
+
+  const date =
+    document.getElementById("dailyDate").value;
+
+  if(!date) return;
+
+  appData.daily[date] =
+    getDailyData();
+
+  saveAppData();
+
+  updateDailyProgress();
+
+  buildMonthly();
+
+}
+
+
+function loadDaily(){
+
+  let date =
+    document.getElementById("dailyDate").value;
+
+  if(!date){
+
+    date =
+      todayString();
+
+    document.getElementById("dailyDate").value =
+      date;
+
+  }
+
+  const data =
+    appData.daily[date] || {};
+
+  const fields = [
+
+    "newRange",
+    "newCompleted",
+    "newR1",
+    "newR2",
+    "newR3",
+
+    "oldRange",
+    "oldCompleted",
+    "oldR1",
+    "oldR2",
+    "oldR3",
+
+    "recentRange",
+    "recentCompleted",
+    "recentR1",
+    "recentR2",
+    "recentR3",
+
+    "musaRange",
+    "musaCompleted",
+    "musaR1",
+    "musaR2",
+    "musaR3"
+
+  ];
+
+  fields.forEach(id=>{
+
+    const el =
+      document.getElementById(id);
+
+    if(!el) return;
+
+    if(el.type === "checkbox"){
+
+      el.checked =
+        data[id] || false;
+
+    }else{
+
+      el.value =
+        data[id] || "";
+
+    }
+
+  });
+
+
+  document.getElementById("dailyNotes").value =
+    data.notes || "";
+
+  updateDailyProgress();
+
+}
+
+
+function updateDailyProgress(){
+
+  const checks = [
+
+    "newCompleted",
+    "oldCompleted",
+    "recentCompleted",
+    "musaCompleted"
+
+  ];
+
+  let completed = 0;
+
+  checks.forEach(id=>{
+
+    if(document.getElementById(id).checked){
+      completed++;
+    }
+
+  });
+
+  const percentage =
+    Math.round(
+      (completed / checks.length) * 100
+    );
+
+  document.getElementById("dailyPercentage").textContent =
+    percentage + "%";
+
+  document.getElementById("dailyProgressFill").style.width =
+    percentage + "%";
+
+}
+
+
+function completeDay(){
+
+  const date =
+    document.getElementById("dailyDate").value;
+
+  if(!date) return;
+
+  const data =
+    getDailyData();
+
+  data.completedDay =
+    true;
+
+  appData.daily[date] =
+    data;
+
+  saveAppData();
+
+  updateDailyProgress();
+
+  buildWeekly();
+
+  buildMonthly();
+
+  alert("Day completed 🤍 Alhamdulillah!");
+
+}
+
+
+/* =========================================================
+   WEEKLY
+========================================================= */
+
+function buildWeekly(){
+
+  const days =
+    appData.weekly.days || [];
+
+  days.forEach((done,index)=>{
+
+    const box =
+      document.getElementById("week-"+index);
+
+    if(!box) return;
+
+    const status =
+      box.querySelector(".status");
+
+    if(done){
+
+      box.classList.add("active");
+
+      status.textContent =
+        "✓";
+
+    }else{
+
+      box.classList.remove("active");
+
+      status.textContent =
+        "○";
+
+    }
+
+  });
+
+
+  const completed =
+    days.filter(Boolean).length;
+
+  const percentage =
+    Math.round(
+      (completed / 7) * 100
+    );
+
+  document.getElementById("weeklyPercentage").textContent =
+    percentage + "%";
+
+  document.getElementById("weeklyProgressFill").style.width =
+    percentage + "%";
+
+}
+
+
+function toggleWeeklyDay(index){
+
+  appData.weekly.days[index] =
+    !appData.weekly.days[index];
+
+  saveAppData();
+
+  buildWeekly();
+
+}
+
+
+function saveWeeklyReflection(){
+
+  appData.weekly.reflection =
+    document.getElementById("weeklyReflection").value;
+
+  saveAppData();
+
+}
+
+
+function loadWeeklyReflection(){
+
+  document.getElementById("weeklyReflection").value =
+    appData.weekly.reflection || "";
+
+}
+
+
+/* =========================================================
+   MONTHLY
+========================================================= */
+
+function getCombinedRanges(data){
+
+  const ranges = [];
+
+  if(data.newRange)
+    ranges.push(data.newRange);
+
+  if(data.oldRange)
+    ranges.push(data.oldRange);
+
+  if(data.recentRange)
+    ranges.push(data.recentRange);
+
+  if(data.musaRange)
+    ranges.push(data.musaRange);
+
+  return ranges.join(" • ");
+
+}
+
+
+function hasCompleted(data){
+
+  return !!(
+
+    data.completedDay ||
+    data.newCompleted ||
+    data.oldCompleted ||
+    data.recentCompleted ||
+    data.musaCompleted
+
+  );
+
+}
+
+
+function hasR1(data){
+
+  return !!(
+
+    data.newR1 ||
+    data.oldR1 ||
+    data.recentR1 ||
+    data.musaR1
+
+  );
+
+}
+
+
+function hasR2(data){
+
+  return !!(
+
+    data.newR2 ||
+    data.oldR2 ||
+    data.recentR2 ||
+    data.musaR2
+
+  );
+
+}
+
+
+function hasR3(data){
+
+  return !!(
+
+    data.newR3 ||
+    data.oldR3 ||
+    data.recentR3 ||
+    data.musaR3
+
+  );
+
+}
+
+
+function buildMonthly(){
+
+  const body =
+    document.getElementById("monthlyBody");
+
+  if(!body) return;
+
+  body.innerHTML = "";
+
+  let completedDays = 0;
+
+  for(let day=1; day<=30; day++){
+
+    const data =
+      getDataForCalendarDay(day);
+
+    const completed =
+      hasCompleted(data);
+
+    if(completed){
+      completedDays++;
+    }
+
+    const row =
+      document.createElement("tr");
+
+    if(completed){
+      row.classList.add("monthly-row-done");
+    }
+
+    row.innerHTML = `
+
+      <td>
+        <strong>${day}</strong>
+      </td>
+
+      <td>
+        ${getCombinedRanges(data) || "—"}
+      </td>
+
+      <td>
+        <input
+          class="monthly-check"
+          type="checkbox"
+          ${completed ? "checked" : ""}
+          onchange="toggleMonthlyCompleted(${day},this.checked)"
+        >
+      </td>
+
+      <td>
+        <input
+          class="monthly-check"
+          type="checkbox"
+          ${hasR1(data) ? "checked" : ""}
+          onchange="toggleMonthlyRevision(${day},'R1',this.checked)"
+        >
+      </td>
+
+      <td>
+        <input
+          class="monthly-check"
+          type="checkbox"
+          ${hasR2(data) ? "checked" : ""}
+          onchange="toggleMonthlyRevision(${day},'R2',this.checked)"
+        >
+      </td>
+
+      <td>
+        <input
+          class="monthly-check"
+          type="checkbox"
+          ${hasR3(data) ? "checked" : ""}
+          onchange="toggleMonthlyRevision(${day},'R3',this.checked)"
+        >
+      </td>
+
+    `;
+
+    body.appendChild(row);
+
+  }
+
+
+  const percentage =
+    Math.round(
+      (completedDays / 30) * 100
+    );
+
+  document.getElementById("monthlyPercentage").textContent =
+    percentage + "%";
+
+  document.getElementById("monthlyProgressFill").style.width =
+    percentage + "%";
+
+}
+
+
+function getDataForCalendarDay(day){
+
+  const now =
+    new Date();
+
+  const year =
+    now.getFullYear();
+
+  const month =
+    String(now.getMonth()+1).padStart(2,"0");
+
+  const date =
+    `${year}-${month}-${String(day).padStart(2,"0")}`;
+
+  return appData.daily[date] || {};
+
+}
+
+
+function getCalendarDate(day){
+
+  const now =
+    new Date();
+
+  const year =
+    now.getFullYear();
+
+  const month =
+    String(now.getMonth()+1).padStart(2,"0");
+
+  return `${year}-${month}-${String(day).padStart(2,"0")}`;
+
+}
+
+
+function toggleMonthlyCompleted(day,value){
+
+  const date =
+    getCalendarDate(day);
+
+  if(!appData.daily[date]){
+    appData.daily[date] = {};
+  }
+
+  appData.daily[date].completedDay =
+    value;
+
+  saveAppData();
+
+  buildMonthly();
+
+  buildWeekly();
+
+}
+
+
+function toggleMonthlyRevision(day,type,value){
+
+  const date =
+    getCalendarDate(day);
+
+  if(!appData.daily[date]){
+    appData.daily[date] = {};
+  }
+
+
+  /*
+    Monthly revision toggles are saved to the
+    New Hifz row as the general monthly revision.
+  */
+
+  if(type === "R1")
+    appData.daily[date].newR1 =
+      value;
+
+  if(type === "R2")
+    appData.daily[date].newR2 =
+      value;
+
+  if(type === "R3")
+    appData.daily[date].newR3 =
+      value;
+
+  saveAppData();
+
+  buildMonthly();
+
+}
+
+
+/* =========================================================
+   PERSONAL SETUP MODAL
+========================================================= */
+
+function openSetupModal(){
+
+  document.getElementById("setupName").value =
+    appData.profile.name || "";
+
+  document.getElementById("setupCurrentHizb").value =
+    appData.profile.currentHizb ?? 33;
+
+  document.getElementById("setupTargetHizb").value =
+    appData.profile.targetHizb ?? 60;
+
+  document
+    .getElementById("setupModal")
+    .classList.add("show");
+
+}
+
+
+function closeSetupModal(){
+
+  document
+    .getElementById("setupModal")
+    .classList.remove("show");
+
+}
+
+
+function savePersonalSetup(){
+
+  const name =
+    document.getElementById("setupName").value.trim();
+
+  const current =
+    parseFloat(
+      document.getElementById("setupCurrentHizb").value
+    );
+
+  const target =
+    parseFloat(
+      document.getElementById("setupTargetHizb").value
+    );
+
+
+  if(name){
+    appData.profile.name =
+      name;
+  }
+
+  if(!isNaN(current)){
+    appData.profile.currentHizb =
+      current;
+  }
+
+  if(!isNaN(target) && target > 0){
+    appData.profile.targetHizb =
+      target;
+  }
+
+
+  saveAppData();
+
+  closeSetupModal();
+
+  updateDashboard();
+
+}
+
+
+/* =========================================================
+   INITIALISE
+========================================================= */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+  loadAppData();
+
+  document.getElementById("dailyDate").value =
+    todayString();
+
+  document.getElementById("userName").value =
+    appData.profile.name || "";
+
+  loadPlans();
+
+  updateDashboard();
+
+  loadDaily();
+
+  buildWeekly();
+
+  loadWeeklyReflection();
+
+  buildMonthly();
+
+});
+
+</script>
+
+</body>
+</html>
