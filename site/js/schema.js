@@ -1,0 +1,34 @@
+export const SCHEMA_VERSION = 1;
+
+export const SCHEMA_SQL = `
+CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS profile (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  name TEXT NOT NULL DEFAULT '',
+  current_hizb REAL NOT NULL DEFAULT 0,
+  target_hizb REAL NOT NULL DEFAULT 60
+);
+CREATE TABLE IF NOT EXISTS plan (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  new_pages REAL NOT NULL DEFAULT 0,
+  old_pages REAL NOT NULL DEFAULT 0,
+  recent_pages REAL NOT NULL DEFAULT 0,
+  tilawah_pages REAL NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS day (
+  date TEXT PRIMARY KEY,
+  notes TEXT NOT NULL DEFAULT '',
+  completed INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS day_entry (
+  date TEXT NOT NULL REFERENCES day(date) ON DELETE CASCADE,
+  category TEXT NOT NULL CHECK (category IN ('new','old','recent','tilawah')),
+  pages REAL NOT NULL DEFAULT 0,
+  note TEXT NOT NULL DEFAULT '',
+  PRIMARY KEY (date, category)
+);
+CREATE TABLE IF NOT EXISTS reflection (period TEXT PRIMARY KEY, text TEXT NOT NULL DEFAULT '');
+INSERT OR IGNORE INTO profile (id) VALUES (1);
+INSERT OR IGNORE INTO plan (id) VALUES (1);
+INSERT OR IGNORE INTO meta (key, value) VALUES ('schema_version', '${SCHEMA_VERSION}');
+`;

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Hifzly: a simple, warm Quran memorization planner and tracker. Plan, memorize, revise, reflect.">
+<meta name="theme-color" content="#f7f1e8">
+<title>Hifzly – Hifz Tracker</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="top-nav" aria-label="Main">
+  <div class="nav-inner">
+    <div class="logo">HIFZLY</div>
+    <div class="nav-links">
+      <button type="button" data-nav="welcome">Home</button>
+      <button type="button" data-nav="plans">Hifz Plan</button>
+      <button type="button" data-nav="tracker">My Tracker</button>
+    </div>
+  </div>
+</nav>
+
+<div id="storage-notice" class="notice" role="status" hidden>
+  <span>Your browser is not letting Hifzly save data, so this session will not be kept. You can still use the app and download a backup from My Tracker.</span>
+  <button type="button" id="dismiss-notice" class="link-btn">Dismiss</button>
+</div>
+
+<main id="main">
+
+<section id="welcome" class="page active" aria-labelledby="welcome-title">
+  <div class="welcome-box">
+    <div class="eyebrow">HIFZLY</div>
+    <p class="bismillah" lang="ar" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
+    <h1 id="welcome-title" class="welcome-title">Your Hifz Journey</h1>
+    <p class="welcome-subtitle">Plan. Memorize. Revise. Reflect. Track your memorisation, revision and consistency, one day at a time.</p>
+    <button type="button" class="primary-btn" id="begin">Begin your journey</button>
+  </div>
+</section>
+
+<section id="intro" class="page" aria-labelledby="intro-title">
+  <div class="container">
+    <div class="intro-grid">
+      <div class="card">
+        <div class="eyebrow">BEGIN YOUR JOURNEY</div>
+        <h2 id="intro-title">A small step every day, bi idhnillah.</h2>
+        <div class="field">
+          <label for="userName">Your name</label>
+          <p class="small-text" id="name-hint">This will appear on your tracker.</p>
+          <input id="userName" type="text" maxlength="80" autocomplete="given-name" aria-describedby="name-hint" placeholder="Enter your name">
+        </div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">HOW HIFZLY WORKS</div>
+        <p class="small-text lead">Your routine has four parts:</p>
+        <ul class="parts">
+          <li><strong>New Hifz</strong> the Quran you are memorising now.</li>
+          <li><strong>Recent Revision</strong> what you memorised lately, reinforced until it settles.</li>
+          <li><strong>Old Revision</strong> older Hifz, so it is never neglected.</li>
+          <li><strong>Tilawah / Musāfahah</strong> general recitation beyond your Hifz.</li>
+        </ul>
+        <p class="small-text">Set a daily target for each. Hifzly plans your week as six days and your month as four weeks, because life happens. Then record what you actually do and watch your consistency grow.</p>
+        <p class="quote">“The best of you are those who learn the Qur’an and teach it.” (Bukhari)</p>
+      </div>
+    </div>
+    <div class="action-row"><button type="button" class="primary-btn" id="intro-continue">Continue</button></div>
+  </div>
+</section>
+
+<section id="plans" class="page" aria-labelledby="plan-title">
+  <div class="container">
+    <div class="card">
+      <div class="eyebrow">YOUR HIFZ PLAN</div>
+      <h2 id="plan-title">Set your daily targets</h2>
+      <p class="subtitle">Enter pages per day. Weekly targets are daily × 6 and monthly targets are weekly × 4. Ten pages make one Hizb.</p>
+      <div id="plan-fields" class="plan-grid"></div>
+      <div class="keys">
+        <h3>Keys</h3>
+        <div class="key-grid">
+          <div class="key"><strong>N</strong> New Hifz</div>
+          <div class="key"><strong>R1</strong> Old Hifz</div>
+          <div class="key"><strong>R2</strong> Recent Hifz</div>
+          <div class="key"><strong>R3</strong> Musāfahah / Tilawah</div>
+        </div>
+      </div>
+      <div class="action-row"><button type="button" class="primary-btn" id="plan-open-tracker">Open My Tracker</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="tracker" class="page" aria-labelledby="greeting">
+  <div class="container">
+    <div class="dashboard">
+      <div class="card">
+        <div class="eyebrow">YOUR HIFZ JOURNEY</div>
+        <h2 id="greeting" class="greeting"></h2>
+        <p class="small-text">One day at a time, in shā’ Allāh.</p>
+        <div class="progress-number"><span id="currentHizb"></span> / <span id="targetHizb"></span> Hizbs</div>
+        <div class="progress-bar" role="progressbar" aria-label="Progress toward your Hifz goal" aria-valuemin="0" aria-valuemax="100" id="goal-bar"><div id="hifzProgressFill" class="progress-fill"></div></div>
+        <p class="small-text"><span id="hifzPercentage"></span>% of your Hifz goal</p>
+        <p class="small-text" id="estimate"></p>
+      </div>
+      <div class="card">
+        <div class="eyebrow">YOUR PLAN</div>
+        <h3>Daily Target</h3>
+        <dl id="daily-target" class="target-list"></dl>
+      </div>
+    </div>
+
+    <div class="setup-actions"><button type="button" class="secondary-btn" id="open-setup">Edit my journey</button></div>
+
+    <div class="tabs" role="tablist" aria-label="Tracker views">
+      <button type="button" role="tab" id="tab-daily" aria-controls="daily" aria-selected="true" data-tab="daily">Daily</button>
+      <button type="button" role="tab" id="tab-weekly" aria-controls="weekly" aria-selected="false" data-tab="weekly" tabindex="-1">Weekly</button>
+      <button type="button" role="tab" id="tab-monthly" aria-controls="monthly" aria-selected="false" data-tab="monthly" tabindex="-1">Monthly</button>
+    </div>
+
+    <div id="daily" class="app-section active" role="tabpanel" aria-labelledby="tab-daily"></div>
+    <div id="weekly" class="app-section" role="tabpanel" aria-labelledby="tab-weekly"></div>
+    <div id="monthly" class="app-section" role="tabpanel" aria-labelledby="tab-monthly"></div>
+
+    <div class="card data-card">
+      <div class="eyebrow">YOUR DATA</div>
+      <p class="small-text">Your Hifz data is kept privately in this browser on this device. Download a backup now and then, especially before clearing browser data or switching devices.</p>
+      <div class="data-actions">
+        <button type="button" class="secondary-btn" id="export-data">Download backup</button>
+        <button type="button" class="secondary-btn" id="import-data">Restore from backup</button>
+        <input type="file" id="import-file" accept="application/json,.json" hidden>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<dialog id="setup" aria-labelledby="setup-title">
+  <form method="dialog" id="setup-form" class="modal-card">
+    <div class="eyebrow">PERSONALIZE YOUR JOURNEY</div>
+    <h2 id="setup-title">Your Hifz setup</h2>
+    <p class="small-text">You can change these any time.</p>
+    <div class="field"><label for="setupName">Your name</label><input id="setupName" type="text" maxlength="80"></div>
+    <div class="field"><label for="setupCurrentHizb">Hizbs already memorised</label><input id="setupCurrentHizb" type="number" min="0" max="60" step="0.1"></div>
+    <div class="field"><label for="setupTargetHizb">Hifz goal (Hizbs)</label><input id="setupTargetHizb" type="number" min="1" max="60" step="0.1"></div>
+    <div class="modal-actions">
+      <button type="button" class="secondary-btn" id="setup-cancel">Cancel</button>
+      <button type="submit" class="primary-btn">Save my journey</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<noscript><p class="notice">Hifzly needs JavaScript to run.</p></noscript>
+
+<script src="vendor/sql-wasm.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
