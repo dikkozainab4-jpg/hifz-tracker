@@ -258,7 +258,7 @@ function statGrid(s, plan, periodDays) {
 function renderWeekly() {
   const range = weekRange(state.date);
   const plan = store.getPlan();
-  const s = summarise(range, store.daysBetween(range.start, range.end), plan, todayStr(), { targetDaysPerPeriod: 6 });
+  const s = summarise(range, store.daysBetween(range.start, range.end), plan, todayStr(), { targetDays: 6 });
   const letters = ["M", "T", "W", "T", "F", "S", "S"];
   const days = s.perDay.map((d, i) => el("button", {
     type: "button", class: `week-day${d.active ? " active" : ""}${d.elapsed ? "" : " future"}`,
@@ -282,7 +282,7 @@ function renderWeekly() {
 function renderMonthly() {
   const range = monthRange(state.date);
   const plan = store.getPlan();
-  const s = summarise(range, store.daysBetween(range.start, range.end), plan, todayStr());
+  const s = summarise(range, store.daysBetween(range.start, range.end), plan, todayStr(), { targetDays: 24 });
   const list = s.perDay.map((d) => el("li", {}, el("button", { type: "button", onclick: () => { state.date = d.date; showTab("daily"); } },
     el("span", {}, fmtDate(d.date, { weekday: "short", day: "numeric", month: "short" })),
     el("span", { class: d.completed ? "done" : "" }, d.completed ? "Complete ✓" : d.pages ? fmtPages(round1(d.pages)) : "—"))));
@@ -292,8 +292,8 @@ function renderMonthly() {
     el("div", { class: "eyebrow" }, "MONTHLY REFLECTION"),
     el("h2", {}, fmtDate(range.start, { month: "long", year: "numeric" })),
     stepper("", 30),
-    statGrid(s, plan, s.elapsedDays),
-    periodBar("Days active so far", s.consistencyPct),
+    statGrid(s, plan, 24),
+    periodBar("Days active (24 make a full month)", s.consistencyPct),
     periodBar("Target completion", s.targetPct),
     el("ul", { class: "day-list" }, ...list),
     el("div", { class: "notes" }, el("label", { for: "monthlyReflection" }, "Month reflection"), refl)));
@@ -400,6 +400,7 @@ function wire() {
     if (f) importData(f);
   });
   $("#dismiss-notice").addEventListener("click", () => { $("#storage-notice").hidden = true; });
+  document.body.dataset.ready = "true";
   window.addEventListener("pagehide", () => store.flush());
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") store.flush(); });
 }

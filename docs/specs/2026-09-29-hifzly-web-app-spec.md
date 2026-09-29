@@ -39,7 +39,7 @@ Each requirement has an ID that plan tasks and tests reference.
 - **R-REF-1** Weekly view is **derived from daily records** for the Monday to Sunday week containing the selected date: totals per category, active days, target completion, consistency. It has a week reflection text saved per ISO week.
 - **R-REF-2** Monthly view is derived for the real calendar month, with the correct number of days, the same totals, and a per-day list. It links each day to the daily editor.
 - **R-REF-3** A day is "active" when any category has actual > 0 or it is marked complete.
-- **R-REF-4** Consistency = active days ÷ days elapsed in the period, capped at the period length. Future days do not count against the user.
+- **R-REF-4** Percentages are measured against the **full period**, never only the days so far (two days done in a week is never 100%). Target days are 6 for a week and 24 for a month (the ×6 / ×4 rule). Consistency = active days ÷ target days, and target completion = actual pages ÷ (daily plan × target days). Both are capped at 100%.
 
 ### Overall progress (§16–18)
 - **R-GOAL-1** Profile holds name, Hizbs memorised, goal Hizbs (0–60). The dashboard shows progress and percentage. The percentage never exceeds 100 or drops below 0, and never divides by zero.

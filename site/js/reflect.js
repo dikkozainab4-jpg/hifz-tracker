@@ -6,9 +6,10 @@ import { CATEGORIES, toPages } from "./calc.js";
  * @param dayRecords Map<date,{completed:boolean, entries:{new,old,recent,tilawah}}>
  * @param plan       {new,old,recent,tilawah} daily target pages
  * @param today      "YYYY-MM-DD"
- * @param opts       { targetDaysPerPeriod } cap on days the plan expects (weeks use 6, the x6 rule)
+ * @param opts       { targetDays } days the plan expects in the whole period (week 6, month 24: the x6 / x4 rule).
+ *                   Percentages are always measured against this full period, never just the days so far.
  */
-export function summarise(range, dayRecords, plan, today, { targetDaysPerPeriod = Infinity } = {}) {
+export function summarise(range, dayRecords, plan, today, { targetDays = range.days.length } = {}) {
   const totals = { new: 0, old: 0, recent: 0, tilawah: 0 };
   const perDay = [];
   let activeDays = 0;
@@ -32,15 +33,13 @@ export function summarise(range, dayRecords, plan, today, { targetDaysPerPeriod 
   }
 
   const actual = CATEGORIES.reduce((s, c) => s + totals[c.key], 0);
-  const targetDays = Math.min(elapsedDays, targetDaysPerPeriod);
   const planned = CATEGORIES.reduce((s, c) => s + toPages(plan?.[c.key]), 0) * targetDays;
-  const activeElapsed = perDay.filter((d) => d.active && d.elapsed).length;
 
   return {
     totals,
     activeDays,
     elapsedDays,
-    consistencyPct: targetDays ? Math.min(100, Math.round((activeElapsed / targetDays) * 100)) : 0,
+    consistencyPct: targetDays ? Math.min(100, Math.round((activeDays / targetDays) * 100)) : 0,
     targetPct: planned > 0 ? Math.min(100, Math.round((actual / planned) * 100)) : 0,
     perDay,
   };
