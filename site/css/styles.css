@@ -99,7 +99,7 @@ textarea { min-height: 120px; resize: vertical; }
 .greeting { font-size: 27px; }
 .progress-number { font-size: 34px; font-weight: 700; margin: 14px 0 4px; }
 .progress-bar { height: 10px; background: var(--line); border-radius: 20px; overflow: hidden; margin: 10px 0; }
-.progress-fill { height: 100%; width: 0; background: var(--accent-fill); transition: width .3s; }
+.progress-fill { height: 100%; width: 100%; background: var(--accent-fill); transform: scaleX(0); transform-origin: left; transition: transform .3s; }
 .target-list { margin-top: 14px; }
 .target-list div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .target-list div:last-child { border-bottom: none; }

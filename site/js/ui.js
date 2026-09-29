@@ -29,7 +29,7 @@ export function toast(message) {
 }
 
 export function setBar(fillEl, pct) {
-  fillEl.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+  fillEl.style.transform = `scaleX(${Math.max(0, Math.min(100, pct)) / 100})`;
 }
 
 export const fmtPages = (n) => `${Number.isInteger(n) ? n : Number(n.toFixed(1))} page${n === 1 ? "" : "s"}`;
