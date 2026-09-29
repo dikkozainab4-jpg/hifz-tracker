@@ -258,7 +258,7 @@ function statGrid(s, plan, periodDays) {
 function renderWeekly() {
   const range = weekRange(state.date);
   const plan = store.getPlan();
-  const s = summarise(range, store.daysBetween(range.start, range.end), plan, todayStr());
+  const s = summarise(range, store.daysBetween(range.start, range.end), plan, todayStr(), { targetDaysPerPeriod: 6 });
   const letters = ["M", "T", "W", "T", "F", "S", "S"];
   const days = s.perDay.map((d, i) => el("button", {
     type: "button", class: `week-day${d.active ? " active" : ""}${d.elapsed ? "" : " future"}`,
@@ -273,7 +273,7 @@ function renderWeekly() {
     stepper(`${fmtDate(range.start, { day: "numeric", month: "short" })} – ${fmtDate(range.end, { day: "numeric", month: "short", year: "numeric" })}`, 7),
     el("div", { class: "week-days" }, ...days),
     statGrid(s, plan, 6),
-    periodBar("Days active so far", s.consistencyPct),
+    periodBar("Days active (6 make a full week)", s.consistencyPct),
     periodBar("Target completion", s.targetPct),
     el("div", { class: "notes" }, el("label", { for: "weeklyReflection" }, "What went well? What can you improve next week?"), refl)));
   refl.value = store.getReflection(range.key);

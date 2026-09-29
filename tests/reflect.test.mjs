@@ -42,3 +42,23 @@ test("targetPct is capped at 100", () => {
   const m = new Map([["2026-09-21", rec(500)]]);
   assert.equal(summarise(week, m, plan, "2026-09-21").targetPct, 100);
 });
+
+test("weekly x6 rule: six full days is a full week (100%), not 6/7", () => {
+  const m = new Map(week.days.slice(0, 6).map((d) => [d, { completed: false, anyDone: true, entries: { new: 1, old: 1, recent: 1, tilawah: 1 } }]));
+  const s = summarise(week, m, plan, "2026-09-30", { targetDaysPerPeriod: 6 });
+  assert.equal(s.consistencyPct, 100);
+  assert.equal(s.targetPct, 100);
+  assert.equal(s.activeDays, 6);
+});
+
+test("weekly x6 rule: three of six days is 50%, and seven active days is capped at 100%", () => {
+  const three = new Map(week.days.slice(0, 3).map((d) => [d, rec(4)]));
+  assert.equal(summarise(week, three, plan, "2026-09-30", { targetDaysPerPeriod: 6 }).consistencyPct, 50);
+  const seven = new Map(week.days.map((d) => [d, rec(4)]));
+  assert.equal(summarise(week, seven, plan, "2026-09-30", { targetDaysPerPeriod: 6 }).consistencyPct, 100);
+});
+
+test("weekly x6 rule mid-week still ignores future days", () => {
+  const m = new Map(week.days.slice(0, 2).map((d) => [d, rec(1)]));
+  assert.equal(summarise(week, m, plan, "2026-09-22", { targetDaysPerPeriod: 6 }).consistencyPct, 100);
+});
