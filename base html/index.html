@@ -1,0 +1,2819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Quran Memorization Tracker</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Georgia, serif;
+    background: #f7f1e8;
+    color: #4d4036;
+}
+
+button,
+input,
+textarea {
+    font-family: inherit;
+}
+
+.page {
+    display: none;
+    min-height: 100vh;
+    padding: 30px 20px 60px;
+}
+
+.page.active {
+    display: block;
+}
+
+/* =========================
+   WELCOME
+========================= */
+
+#welcome {
+    min-height: 100vh;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+}
+
+#welcome.active {
+    display: flex;
+}
+
+.welcome-box {
+    max-width: 700px;
+    width: 100%;
+}
+
+.eyebrow {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: #8b7766;
+    margin-bottom: 28px;
+}
+
+.bismillah {
+    font-size: 34px;
+    margin-bottom: 25px;
+    color: #5c4c40;
+}
+
+.welcome-title {
+    font-size: clamp(45px, 8vw, 78px);
+    font-weight: normal;
+    margin: 0;
+}
+
+.welcome-subtitle {
+    max-width: 500px;
+    margin: 22px auto 35px;
+    line-height: 1.8;
+    font-size: 16px;
+    color: #7c6b5d;
+}
+
+.primary-btn {
+    border: none;
+    background: #5f5044;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.primary-btn:hover {
+    opacity: .9;
+    transform: translateY(-1px);
+}
+
+/* =========================
+   MAIN NAVIGATION
+========================= */
+
+.main-navigation {
+    max-width: 1050px;
+    margin: 0 auto 28px;
+    background: #fffdf9;
+    border: 1px solid #eadfd2;
+    border-radius: 18px;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    position: sticky;
+    top: 12px;
+    z-index: 50;
+    box-shadow: 0 5px 20px rgba(87,68,50,.04);
+}
+
+.main-nav-btn {
+    flex: 1;
+    max-width: 220px;
+    border: none;
+    background: transparent;
+    color: #776657;
+    padding: 12px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.main-nav-btn:hover {
+    background: #f5eee6;
+}
+
+.main-nav-btn.active {
+    background: #5f5044;
+    color: white;
+}
+
+/* =========================
+   GENERAL
+========================= */
+
+.container {
+    max-width: 1050px;
+    margin: auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    font-size: 40px;
+    font-weight: normal;
+    margin-bottom: 8px;
+}
+
+.header p {
+    color: #8a7869;
+    margin: 0;
+}
+
+.card {
+    background: #fffdf9;
+    border: 1px solid #eadfd2;
+    border-radius: 22px;
+    padding: 25px;
+    margin-bottom: 22px;
+    box-shadow: 0 8px 25px rgba(87,68,50,.04);
+}
+
+.card-title {
+    margin: 0 0 7px;
+    font-size: 22px;
+    font-weight: normal;
+}
+
+.card-subtitle {
+    color: #948274;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* =========================
+   NAME
+========================= */
+
+.name-box {
+    max-width: 700px;
+    margin: auto;
+}
+
+.name-input {
+    width: 100%;
+    padding: 16px 18px;
+    border: 1px solid #ded0c2;
+    border-radius: 14px;
+    background: #fffdf9;
+    outline: none;
+    font-size: 16px;
+    color: #4d4036;
+}
+
+.name-input:focus {
+    border-color: #9c8876;
+}
+
+/* =========================
+   VIRTUES
+========================= */
+
+.virtue {
+    padding: 18px 0;
+    border-bottom: 1px solid #eadfd2;
+}
+
+.virtue:last-child {
+    border-bottom: none;
+}
+
+.virtue-number {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #a38c78;
+    margin-bottom: 6px;
+}
+
+.virtue-title {
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.virtue-quote {
+    font-size: 13px;
+    color: #897669;
+    margin-top: 7px;
+    font-style: italic;
+}
+
+/* =========================
+   PLAN
+========================= */
+
+.plan-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.plan-section {
+    background: #fffdf9;
+    border: 1px solid #eadfd2;
+    border-radius: 22px;
+    padding: 25px;
+}
+
+.plan-section h2 {
+    font-size: 27px;
+    font-weight: normal;
+    margin: 0 0 20px;
+}
+
+.plan-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee3d8;
+}
+
+.plan-field:last-child {
+    border-bottom: none;
+}
+
+.plan-field label {
+    font-size: 15px;
+}
+
+.plan-input {
+    width: 150px;
+    padding: 9px 10px;
+    border: none;
+    border-bottom: 1px solid #bfae9d;
+    background: transparent;
+    outline: none;
+    text-align: right;
+    color: #4d4036;
+    font-size: 15px;
+}
+
+.plan-input:focus {
+    border-bottom-color: #5f5044;
+}
+
+.calculated {
+    background: #f5eee6;
+    border-radius: 10px;
+}
+
+.calculated .plan-input {
+    color: #786657;
+    font-weight: bold;
+}
+
+.calculated-label::after {
+    content: "  calculated";
+    font-size: 10px;
+    color: #aa9683;
+    letter-spacing: .5px;
+}
+
+.keys-card {
+    margin-top: 22px;
+}
+
+.keys {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 12px;
+}
+
+.key {
+    background: #faf5ee;
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.key strong {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.key span {
+    font-size: 13px;
+    color: #7e6c5d;
+}
+
+/* =========================
+   TRACKER NAVIGATION
+========================= */
+
+.tracker-navigation {
+    background: #fffdf9;
+    border: 1px solid #eadfd2;
+    border-radius: 18px;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    margin-bottom: 25px;
+}
+
+.nav-btn {
+    flex: 1;
+    max-width: 220px;
+    border: none;
+    background: transparent;
+    color: #776657;
+    padding: 12px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.nav-btn.active {
+    background: #5f5044;
+    color: white;
+}
+
+/* =========================
+   APP SECTIONS
+========================= */
+
+.app-section {
+    display: none;
+}
+
+.app-section.active {
+    display: block;
+}
+
+/* =========================
+   DAILY
+========================= */
+
+.date-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.date-input {
+    padding: 10px 13px;
+    border: 1px solid #ded0c2;
+    border-radius: 10px;
+    background: #fffdf9;
+    color: #4d4036;
+}
+
+.daily-table-wrapper,
+.monthly-table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #f4ece3;
+    color: #6e5d4e;
+    font-size: 12px;
+    padding: 12px 10px;
+    white-space: nowrap;
+}
+
+td {
+    border-bottom: 1px solid #eee3d8;
+    padding: 13px 10px;
+    font-size: 13px;
+    text-align: center;
+}
+
+td:first-child {
+    text-align: left;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.range-input {
+    width: 180px;
+    border: none;
+    border-bottom: 1px solid #d9c9ba;
+    background: transparent;
+    padding: 7px;
+    outline: none;
+    color: #4d4036;
+}
+
+.check {
+    width: 18px;
+    height: 18px;
+    accent-color: #6a5849;
+    cursor: pointer;
+}
+
+.notes {
+    width: 100%;
+    min-height: 120px;
+    border: 1px solid #ded0c2;
+    border-radius: 14px;
+    background: #fffdf9;
+    padding: 14px;
+    resize: vertical;
+    outline: none;
+    color: #4d4036;
+}
+
+.progress-area {
+    margin-top: 20px;
+}
+
+.progress-track {
+    height: 8px;
+    background: #eee4da;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #6a5849;
+    transition: width .3s ease;
+}
+
+.progress-text {
+    font-size: 13px;
+    color: #806e60;
+    margin-top: 8px;
+}
+
+.complete-btn {
+    margin-top: 18px;
+    border: none;
+    background: #6a5849;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+/* =========================
+   WEEKLY
+========================= */
+
+.week-days {
+    display: grid;
+    grid-template-columns: repeat(7,1fr);
+    gap: 10px;
+}
+
+.day-box {
+    text-align: center;
+    background: #faf5ee;
+    border-radius: 15px;
+    padding: 15px 8px;
+}
+
+.day-name {
+    font-size: 12px;
+    color: #8a7768;
+    margin-bottom: 8px;
+}
+
+.day-number {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.day-check {
+    width: 18px;
+    height: 18px;
+    accent-color: #6a5849;
+}
+
+.weekly-reflection {
+    width: 100%;
+    min-height: 130px;
+    border: 1px solid #ded0c2;
+    border-radius: 14px;
+    background: #fffdf9;
+    padding: 14px;
+    resize: vertical;
+    outline: none;
+}
+
+/* =========================
+   MONTHLY
+========================= */
+
+.monthly-table th,
+.monthly-table td {
+    min-width: 90px;
+}
+
+.month-day {
+    font-weight: bold;
+}
+
+.month-check {
+    width: 17px;
+    height: 17px;
+    accent-color: #6a5849;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.bottom-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width:800px) {
+
+    .plan-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .keys {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .week-days {
+        grid-template-columns: repeat(4,1fr);
+    }
+}
+
+@media (max-width:600px) {
+
+    .page {
+        padding: 22px 13px 45px;
+    }
+
+    .card,
+    .plan-section {
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .welcome-title {
+        font-size: 45px;
+    }
+
+    .bismillah {
+        font-size: 28px;
+    }
+
+    .header h1 {
+        font-size: 31px;
+    }
+
+    .plan-field {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .plan-input {
+        width: 100%;
+        text-align: left;
+    }
+
+    .main-navigation {
+        position: static;
+    }
+
+    .main-nav-btn {
+        padding: 10px 7px;
+        font-size: 12px;
+    }
+
+    .week-days {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .range-input {
+        width: 130px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+
+<!-- =====================================================
+     WELCOME
+===================================================== -->
+
+<section id="welcome" class="page active">
+
+    <div class="welcome-box">
+
+        <div class="eyebrow">
+            QURAN MEMORIZATION TRACKER
+        </div>
+
+        <div class="bismillah">
+            بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+        </div>
+
+        <h1 class="welcome-title">
+            Your Hifz Journey
+        </h1>
+
+        <p class="welcome-subtitle">
+            Track your memorisation, revision and consistency — one day at a time.
+        </p>
+
+        <button class="primary-btn" onclick="showNamePage()">
+            Begin your journey
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     INTRO / HOME
+===================================================== -->
+
+<section id="intro" class="page">
+
+    <div class="container">
+
+        <!-- MAIN NAVIGATION -->
+
+        <div class="main-navigation">
+
+            <button
+                class="main-nav-btn active"
+                onclick="goHome()"
+            >
+                Home
+            </button>
+
+            <button
+                class="main-nav-btn"
+                onclick="goToPlans()"
+            >
+                Hifz Plan
+            </button>
+
+            <button
+                class="main-nav-btn"
+                onclick="goToTracker()"
+            >
+                My Tracker
+            </button>
+
+        </div>
+
+
+        <div class="header">
+
+            <h1>Begin Your Journey</h1>
+
+            <p>
+                A small step every day, bi idhnillah.
+            </p>
+
+        </div>
+
+
+        <div class="name-box">
+
+            <div class="card">
+
+                <h2 class="card-title">
+                    Your Name
+                </h2>
+
+                <div class="card-subtitle">
+                    This will appear on your tracker.
+                </div>
+
+                <input
+                    class="name-input"
+                    id="userName"
+                    type="text"
+                    placeholder="Enter your name"
+                    oninput="saveName()"
+                >
+
+            </div>
+
+
+            <div class="card">
+
+                <h2 class="card-title">
+                    Virtues of the Qur’an
+                </h2>
+
+                <div class="virtue">
+                    <div class="virtue-number">01</div>
+                    <div class="virtue-title">
+                        RECITING THE QUR’ĀN MAKES YOU ALLAH’S CHOSEN PEOPLE.
+                    </div>
+                </div>
+
+                <div class="virtue">
+                    <div class="virtue-number">02</div>
+                    <div class="virtue-title">
+                        THE QUR’ĀN GUIDES, HEALS, AND LIGHTS YOUR PATH.
+                    </div>
+                    <div class="virtue-quote">
+                        “THE BEST OF YOU ARE THOSE WHO LEARN THE QUR’AN AND TEACH IT.” (BUKHARI)
+                    </div>
+                </div>
+
+                <div class="virtue">
+                    <div class="virtue-number">03</div>
+                    <div class="virtue-title">
+                        RAISES YOUR STATUS IN JANNAH. ELEVATES YOU AND REWARDS YOUR FAMILY.
+                    </div>
+                </div>
+
+                <div class="virtue">
+                    <div class="virtue-number">04</div>
+                    <div class="virtue-title">
+                        INTERCEDES FOR YOU ON THE DAY OF JUDGMENT.
+                    </div>
+                </div>
+
+                <div class="virtue">
+                    <div class="virtue-number">05</div>
+                    <div class="virtue-title">
+                        SOFTENS AND PURIFIES THE HEART
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="bottom-actions">
+
+                <button
+                    class="primary-btn"
+                    onclick="goToPlans()"
+                >
+                    Continue
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PLANS
+===================================================== -->
+
+<section id="plans" class="page">
+
+    <div class="container">
+
+        <!-- MAIN NAVIGATION -->
+
+        <div class="main-navigation">
+
+            <button
+                class="main-nav-btn"
+                onclick="goHome()"
+            >
+                Home
+            </button>
+
+            <button
+                class="main-nav-btn active"
+                onclick="goToPlans()"
+            >
+                Hifz Plan
+            </button>
+
+            <button
+                class="main-nav-btn"
+                onclick="goToTracker()"
+            >
+                My Tracker
+            </button>
+
+        </div>
+
+
+        <div class="header">
+
+            <h1>Your Hifz Plan</h1>
+
+            <p>
+                Set your targets and let your tracker calculate the rest.
+            </p>
+
+        </div>
+
+
+        <div class="plan-layout">
+
+            <div class="plan-section">
+
+                <h2>Weekly Plan</h2>
+
+                <div class="plan-field">
+
+                    <label>
+                        Pages per day
+                    </label>
+
+                    <input
+                        id="pagesDay"
+                        class="plan-input"
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        placeholder="e.g. 1"
+                        oninput="calculatePlans()"
+                    >
+
+                </div>
+
+
+                <div class="plan-field calculated">
+
+                    <label class="calculated-label">
+                        Pages per week
+                    </label>
+
+                    <input
+                        id="pagesWeek"
+                        class="plan-input"
+                        type="number"
+                        readonly
+                        placeholder="—"
+                    >
+
+                </div>
+
+
+                <div class="plan-field">
+
+                    <label>Revision 1</label>
+
+                    <input
+                        id="weeklyR1"
+                        class="plan-input"
+                        type="text"
+                        placeholder="Target"
+                        oninput="savePlans()"
+                    >
+
+                </div>
+
+
+                <div class="plan-field">
+
+                    <label>Revision 2</label>
+
+                    <input
+                        id="weeklyR2"
+                        class="plan-input"
+                        type="text"
+                        placeholder="Target"
+                        oninput="savePlans()"
+                    >
+
+                </div>
+
+
+                <div class="plan-field">
+
+                    <label>Revision 3</label>
+
+                    <input
+                        id="weeklyR3"
+                        class="plan-input"
+                        type="text"
+                        placeholder="Target"
+                        oninput="savePlans()"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="plan-section">
+
+                <h2>Monthly Plan</h2>
+
+                <div class="plan-field calculated">
+
+                    <label class="calculated-label">
+                        Pages per month
+                    </label>
+
+                    <input
+                        id="pagesMonth"
+                        class="plan-input"
+                        type="number"
+                        readonly
+                        placeholder="—"
+                    >
+
+                </div>
+
+
+                <div class="plan-field calculated">
+
+                    <label class="calculated-label">
+                        Hizbs per week
+                    </label>
+
+                    <input
+                        id="hizbsWeek"
+                        class="plan-input"
+                        type="number"
+                        readonly
+                        placeholder="—"
+                    >
+
+                </div>
+
+
+                <div class="plan-field">
+
+                    <label>Revision 1</label>
+
+                    <input
+                        id="monthlyR1"
+                        class="plan-input"
+                        type="text"
+                        placeholder="Target"
+                        oninput="savePlans()"
+                    >
+
+                </div>
+
+
+                <div class="plan-field">
+
+                    <label>Revision 2</label>
+
+                    <input
+                        id="monthlyR2"
+                        class="plan-input"
+                        type="text"
+                        placeholder="Target"
+                        oninput="savePlans()"
+                    >
+
+                </div>
+
+
+                <div class="plan-field">
+
+                    <label>Revision 3</label>
+
+                    <input
+                        id="monthlyR3"
+                        class="plan-input"
+                        type="text"
+                        placeholder="Target"
+                        oninput="savePlans()"
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card keys-card">
+
+            <h2 class="card-title">
+                Keys
+            </h2>
+
+            <div class="card-subtitle">
+                Keep your revision system simple.
+            </div>
+
+            <div class="keys">
+
+                <div class="key">
+                    <strong>N</strong>
+                    <span>New Hifz</span>
+                </div>
+
+                <div class="key">
+                    <strong>R1</strong>
+                    <span>Old Hifz</span>
+                </div>
+
+                <div class="key">
+                    <strong>R2</strong>
+                    <span>Recent Hifz</span>
+                </div>
+
+                <div class="key">
+                    <strong>R3</strong>
+                    <span>Musāfahah / Tilawah</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     TRACKER
+===================================================== -->
+
+<section id="app" class="page">
+
+    <div class="container">
+
+        <!-- MAIN NAVIGATION -->
+
+        <div class="main-navigation">
+
+            <button
+                class="main-nav-btn"
+                onclick="goHome()"
+            >
+                Home
+            </button>
+
+            <button
+                class="main-nav-btn"
+                onclick="goToPlans()"
+            >
+                Hifz Plan
+            </button>
+
+            <button
+                class="main-nav-btn active"
+                onclick="goToTracker()"
+            >
+                My Tracker
+            </button>
+
+        </div>
+
+
+        <div class="header">
+
+            <h1 id="trackerGreeting">
+                Quran Memorization Tracker
+            </h1>
+
+            <p>
+                One day at a time, in shā’ Allāh.
+            </p>
+
+        </div>
+
+
+        <!-- TRACKER TABS -->
+
+        <div class="tracker-navigation">
+
+            <button
+                class="nav-btn active"
+                onclick="showAppSection('daily', this)"
+            >
+                Daily
+            </button>
+
+            <button
+                class="nav-btn"
+                onclick="showAppSection('weekly', this)"
+            >
+                Weekly Progress
+            </button>
+
+            <button
+                class="nav-btn"
+                onclick="showAppSection('monthly', this)"
+            >
+                Monthly Tracker
+            </button>
+
+        </div>
+
+
+        <!-- ================= DAILY ================= -->
+
+        <div id="daily" class="app-section active">
+
+            <div class="card">
+
+                <div class="date-row">
+
+                    <div>
+
+                        <h2 class="card-title">
+                            Daily Hifz
+                        </h2>
+
+                        <div class="card-subtitle">
+                            Record today's memorisation and revision.
+                        </div>
+
+                    </div>
+
+                    <input
+                        type="date"
+                        id="dailyDate"
+                        class="date-input"
+                        onchange="loadDaily()"
+                    >
+
+                </div>
+
+
+                <div class="daily-table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Category</th>
+                                <th>Ayah Range</th>
+                                <th>Completed</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+
+                                <td>
+                                    New Hifz
+                                </td>
+
+                                <td>
+                                    <input
+                                        class="range-input"
+                                        id="newRange"
+                                        placeholder="e.g. 1–10"
+                                        oninput="saveDaily()"
+                                    >
+                                </td>
+
+                                <td>
+                                    <input
+                                        class="check"
+                                        type="checkbox"
+                                        id="newCompleted"
+                                        onchange="saveDaily(); updateDailyProgress()"
+                                    >
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    Old Hifz
+                                </td>
+
+                                <td>
+                                    <input
+                                        class="range-input"
+                                        id="oldRange"
+                                        placeholder="Ayah range"
+                                        oninput="saveDaily()"
+                                    >
+                                </td>
+
+                                <td>
+                                    <input
+                                        class="check"
+                                        type="checkbox"
+                                        id="oldCompleted"
+                                        onchange="saveDaily(); updateDailyProgress()"
+                                    >
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    Recent Hifz
+                                </td>
+
+                                <td>
+                                    <input
+                                        class="range-input"
+                                        id="recentRange"
+                                        placeholder="Ayah range"
+                                        oninput="saveDaily()"
+                                    >
+                                </td>
+
+                                <td>
+                                    <input
+                                        class="check"
+                                        type="checkbox"
+                                        id="recentCompleted"
+                                        onchange="saveDaily(); updateDailyProgress()"
+                                    >
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    Musāfahah / Tilawah
+                                </td>
+
+                                <td>
+                                    <input
+                                        class="range-input"
+                                        id="musafahahRange"
+                                        placeholder="e.g. Juz 1"
+                                        oninput="saveDaily()"
+                                    >
+                                </td>
+
+                                <td>
+                                    <input
+                                        class="check"
+                                        type="checkbox"
+                                        id="musafahahCompleted"
+                                        onchange="saveDaily(); updateDailyProgress()"
+                                    >
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <div class="progress-area">
+
+                    <div class="progress-track">
+
+                        <div
+                            id="dailyProgressFill"
+                            class="progress-fill"
+                        ></div>
+
+                    </div>
+
+                    <div
+                        id="dailyProgressText"
+                        class="progress-text"
+                    >
+                        0% completed
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="complete-btn"
+                    onclick="completeDay()"
+                >
+                    Mark Day Complete
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <h2 class="card-title">
+                    Notes / Reflections
+                </h2>
+
+                <div class="card-subtitle">
+                    Write anything you want to remember from today.
+                </div>
+
+                <textarea
+                    class="notes"
+                    id="dailyNotes"
+                    placeholder="How did today's hifz go?"
+                    oninput="saveDaily()"
+                ></textarea>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= WEEKLY ================= -->
+
+        <div id="weekly" class="app-section">
+
+            <div class="card">
+
+                <h2 class="card-title">
+                    Weekly Progress
+                </h2>
+
+                <div class="card-subtitle">
+                    Keep showing up throughout the week.
+                </div>
+
+                <div
+                    id="weekDays"
+                    class="week-days"
+                ></div>
+
+                <div class="progress-area">
+
+                    <div class="progress-track">
+
+                        <div
+                            id="weeklyProgressFill"
+                            class="progress-fill"
+                        ></div>
+
+                    </div>
+
+                    <div
+                        id="weeklyProgressText"
+                        class="progress-text"
+                    >
+                        0% completed
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h2 class="card-title">
+                    Weekly Reflection
+                </h2>
+
+                <div class="card-subtitle">
+                    What went well? What can you improve next week?
+                </div>
+
+                <textarea
+                    id="weeklyReflection"
+                    class="weekly-reflection"
+                    placeholder="Reflect on your week..."
+                    oninput="saveWeeklyReflection()"
+                ></textarea>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= MONTHLY ================= -->
+
+        <div id="monthly" class="app-section">
+
+            <div class="card">
+
+                <h2 class="card-title">
+                    Monthly Tracker
+                </h2>
+
+                <div class="card-subtitle">
+                    Your daily tracker automatically reflects here.
+                </div>
+
+                <div class="monthly-table-wrapper">
+
+                    <table class="monthly-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Day</th>
+                                <th>Ayah Range</th>
+                                <th>Completed</th>
+                                <th>R1</th>
+                                <th>R2</th>
+                                <th>R3</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="monthlyBody"></tbody>
+
+                    </table>
+
+                </div>
+
+
+                <div class="progress-area">
+
+                    <div class="progress-track">
+
+                        <div
+                            id="monthlyProgressFill"
+                            class="progress-fill"
+                        ></div>
+
+                    </div>
+
+                    <div
+                        id="monthlyProgressText"
+                        class="progress-text"
+                    >
+                        0% completed
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =====================================================
+   STORAGE
+===================================================== */
+
+const STORAGE_KEY = "hifzTracker";
+
+const defaultData = {
+
+    name: "",
+
+    plans: {
+        pagesDay: "",
+        pagesWeek: "",
+        pagesMonth: "",
+        hizbsWeek: "",
+        weeklyR1: "",
+        weeklyR2: "",
+        weeklyR3: "",
+        monthlyR1: "",
+        monthlyR2: "",
+        monthlyR3: ""
+    },
+
+    daily: {},
+
+    weeklyReflection: ""
+
+};
+
+
+let trackerData =
+    JSON.parse(
+        localStorage.getItem(STORAGE_KEY)
+    ) || defaultData;
+
+
+trackerData.plans =
+    Object.assign(
+        {},
+        defaultData.plans,
+        trackerData.plans || {}
+    );
+
+trackerData.daily =
+    trackerData.daily || {};
+
+
+function saveTracker() {
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(trackerData)
+    );
+
+}
+
+
+/* =====================================================
+   MAIN NAVIGATION
+===================================================== */
+
+function hideAllPages() {
+
+    document
+        .querySelectorAll(".page")
+        .forEach(page => {
+            page.classList.remove("active");
+        });
+
+}
+
+
+function updateMainNavigation(activePage) {
+
+    document
+        .querySelectorAll(".main-nav-btn")
+        .forEach(button => {
+
+            button.classList.remove("active");
+
+        });
+
+
+    document
+        .querySelectorAll(
+            `.main-nav-btn[data-page="${activePage}"]`
+        )
+        .forEach(button => {
+
+            button.classList.add("active");
+
+        });
+
+}
+
+
+/*
+   These functions are the actual navigation.
+
+   Home = intro/home page
+   Hifz Plan = plans page
+   My Tracker = tracker page
+*/
+
+
+function goHome() {
+
+    hideAllPages();
+
+    document
+        .getElementById("intro")
+        .classList.add("active");
+
+    const nameInput =
+        document.getElementById("userName");
+
+    if (nameInput) {
+
+        nameInput.value =
+            trackerData.name || "";
+
+    }
+
+}
+
+
+function goToPlans() {
+
+    saveName();
+
+    hideAllPages();
+
+    document
+        .getElementById("plans")
+        .classList.add("active");
+
+    loadPlans();
+
+}
+
+
+function goToTracker() {
+
+    savePlans();
+
+    hideAllPages();
+
+    document
+        .getElementById("app")
+        .classList.add("active");
+
+
+    const name =
+        trackerData.name || "Your";
+
+
+    document
+        .getElementById("trackerGreeting")
+        .textContent =
+        name + "'s Hifz Tracker";
+
+
+    setToday();
+
+    loadDaily();
+
+    buildWeekly();
+
+    buildMonthly();
+
+    loadWeeklyReflection();
+
+}
+
+
+/* =====================================================
+   FIRST WELCOME SCREEN
+===================================================== */
+
+function showNamePage() {
+
+    hideAllPages();
+
+    document
+        .getElementById("intro")
+        .classList.add("active");
+
+
+    document
+        .getElementById("userName")
+        .value =
+        trackerData.name || "";
+
+}
+
+
+function showPlans() {
+
+    goToPlans();
+
+}
+
+
+function openTracker() {
+
+    goToTracker();
+
+}
+
+
+/* =====================================================
+   NAME
+===================================================== */
+
+function saveName() {
+
+    const input =
+        document.getElementById("userName");
+
+    if (!input) return;
+
+    trackerData.name =
+        input.value.trim();
+
+    saveTracker();
+
+}
+
+
+/* =====================================================
+   PLAN CALCULATIONS
+===================================================== */
+
+function calculatePlans() {
+
+    const pagesDay =
+        parseFloat(
+            document.getElementById("pagesDay").value
+        );
+
+
+    if (
+        !isNaN(pagesDay) &&
+        pagesDay > 0
+    ) {
+
+        const pagesWeek =
+            pagesDay * 7;
+
+        const pagesMonth =
+            pagesDay * 30;
+
+        const hizbsWeek =
+            pagesWeek / 10;
+
+
+        document
+            .getElementById("pagesWeek")
+            .value =
+            formatNumber(pagesWeek);
+
+
+        document
+            .getElementById("pagesMonth")
+            .value =
+            formatNumber(pagesMonth);
+
+
+        document
+            .getElementById("hizbsWeek")
+            .value =
+            formatNumber(hizbsWeek);
+
+
+        trackerData.plans.pagesDay =
+            pagesDay;
+
+        trackerData.plans.pagesWeek =
+            pagesWeek;
+
+        trackerData.plans.pagesMonth =
+            pagesMonth;
+
+        trackerData.plans.hizbsWeek =
+            hizbsWeek;
+
+    } else {
+
+        document
+            .getElementById("pagesWeek")
+            .value = "";
+
+        document
+            .getElementById("pagesMonth")
+            .value = "";
+
+        document
+            .getElementById("hizbsWeek")
+            .value = "";
+
+        trackerData.plans.pagesDay = "";
+        trackerData.plans.pagesWeek = "";
+        trackerData.plans.pagesMonth = "";
+        trackerData.plans.hizbsWeek = "";
+
+    }
+
+
+    saveTracker();
+
+}
+
+
+function formatNumber(number) {
+
+    return Number.isInteger(number)
+        ? number
+        : Number(number.toFixed(2));
+
+}
+
+
+/* =====================================================
+   SAVE PLANS
+===================================================== */
+
+function savePlans() {
+
+    const fields = [
+        "pagesDay",
+        "weeklyR1",
+        "weeklyR2",
+        "weeklyR3",
+        "monthlyR1",
+        "monthlyR2",
+        "monthlyR3"
+    ];
+
+
+    fields.forEach(id => {
+
+        const element =
+            document.getElementById(id);
+
+        if (element) {
+
+            trackerData.plans[id] =
+                element.value;
+
+        }
+
+    });
+
+
+    const pagesDay =
+        parseFloat(
+            document.getElementById("pagesDay").value
+        );
+
+
+    if (
+        !isNaN(pagesDay) &&
+        pagesDay > 0
+    ) {
+
+        trackerData.plans.pagesDay =
+            pagesDay;
+
+    }
+
+
+    saveTracker();
+
+}
+
+
+/* =====================================================
+   LOAD PLANS
+===================================================== */
+
+function loadPlans() {
+
+    const p =
+        trackerData.plans;
+
+
+    document.getElementById("pagesDay").value =
+        p.pagesDay || "";
+
+    document.getElementById("weeklyR1").value =
+        p.weeklyR1 || "";
+
+    document.getElementById("weeklyR2").value =
+        p.weeklyR2 || "";
+
+    document.getElementById("weeklyR3").value =
+        p.weeklyR3 || "";
+
+    document.getElementById("monthlyR1").value =
+        p.monthlyR1 || "";
+
+    document.getElementById("monthlyR2").value =
+        p.monthlyR2 || "";
+
+    document.getElementById("monthlyR3").value =
+        p.monthlyR3 || "";
+
+
+    calculatePlans();
+
+}
+
+
+/* =====================================================
+   TRACKER TABS
+===================================================== */
+
+function showAppSection(
+    sectionId,
+    button
+) {
+
+    document
+        .querySelectorAll(".app-section")
+        .forEach(section => {
+
+            section.classList.remove("active");
+
+        });
+
+
+    const selected =
+        document.getElementById(sectionId);
+
+
+    if (!selected) return;
+
+
+    selected.classList.add("active");
+
+
+    document
+        .querySelectorAll(".nav-btn")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+
+    if (button) {
+
+        button.classList.add("active");
+
+    }
+
+
+    if (sectionId === "weekly") {
+        buildWeekly();
+    }
+
+
+    if (sectionId === "monthly") {
+        buildMonthly();
+    }
+
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function getTodayString() {
+
+    const date =
+        new Date();
+
+    return (
+        date.getFullYear() +
+        "-" +
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0") +
+        "-" +
+        String(
+            date.getDate()
+        ).padStart(2, "0")
+    );
+
+}
+
+
+function setToday() {
+
+    const input =
+        document.getElementById("dailyDate");
+
+
+    if (
+        input &&
+        !input.value
+    ) {
+
+        input.value =
+            getTodayString();
+
+    }
+
+}
+
+
+/* =====================================================
+   DAILY
+===================================================== */
+
+function getDailyObject() {
+
+    const date =
+        document.getElementById(
+            "dailyDate"
+        ).value;
+
+
+    const old =
+        trackerData.daily[date] || {};
+
+
+    return {
+
+        newRange:
+            document.getElementById(
+                "newRange"
+            ).value,
+
+        oldRange:
+            document.getElementById(
+                "oldRange"
+            ).value,
+
+        recentRange:
+            document.getElementById(
+                "recentRange"
+            ).value,
+
+        musafahahRange:
+            document.getElementById(
+                "musafahahRange"
+            ).value,
+
+
+        newCompleted:
+            document.getElementById(
+                "newCompleted"
+            ).checked,
+
+        oldCompleted:
+            document.getElementById(
+                "oldCompleted"
+            ).checked,
+
+        recentCompleted:
+            document.getElementById(
+                "recentCompleted"
+            ).checked,
+
+        musafahahCompleted:
+            document.getElementById(
+                "musafahahCompleted"
+            ).checked,
+
+
+        notes:
+            document.getElementById(
+                "dailyNotes"
+            ).value,
+
+
+        completedDay:
+            old.completedDay || false
+
+    };
+
+}
+
+
+function saveDaily() {
+
+    const date =
+        document.getElementById(
+            "dailyDate"
+        ).value;
+
+
+    if (!date) return;
+
+
+    trackerData.daily[date] =
+        getDailyObject();
+
+
+    saveTracker();
+
+    updateDailyProgress();
+
+    buildMonthly();
+
+}
+
+
+function loadDaily() {
+
+    const date =
+        document.getElementById(
+            "dailyDate"
+        ).value;
+
+
+    if (!date) return;
+
+
+    const data =
+        trackerData.daily[date] || {};
+
+
+    const textFields = [
+        "newRange",
+        "oldRange",
+        "recentRange",
+        "musafahahRange",
+        "dailyNotes"
+    ];
+
+
+    textFields.forEach(id => {
+
+        const element =
+            document.getElementById(id);
+
+
+        if (!element) return;
+
+
+        if (id === "dailyNotes") {
+
+            element.value =
+                data.notes || "";
+
+        } else {
+
+            element.value =
+                data[id] || "";
+
+        }
+
+    });
+
+
+    const checks = [
+        "newCompleted",
+        "oldCompleted",
+        "recentCompleted",
+        "musafahahCompleted"
+    ];
+
+
+    checks.forEach(id => {
+
+        const element =
+            document.getElementById(id);
+
+
+        if (element) {
+
+            element.checked =
+                Boolean(data[id]);
+
+        }
+
+    });
+
+
+    updateDailyProgress();
+
+}
+
+
+function updateDailyProgress() {
+
+    const checks = [
+        "newCompleted",
+        "oldCompleted",
+        "recentCompleted",
+        "musafahahCompleted"
+    ];
+
+
+    let completed = 0;
+
+
+    checks.forEach(id => {
+
+        const element =
+            document.getElementById(id);
+
+
+        if (
+            element &&
+            element.checked
+        ) {
+
+            completed++;
+
+        }
+
+    });
+
+
+    const percentage =
+        Math.round(
+            completed /
+            checks.length *
+            100
+        );
+
+
+    document
+        .getElementById("dailyProgressFill")
+        .style.width =
+        percentage + "%";
+
+
+    document
+        .getElementById("dailyProgressText")
+        .textContent =
+        percentage +
+        "% completed";
+
+}
+
+
+function completeDay() {
+
+    const date =
+        document.getElementById(
+            "dailyDate"
+        ).value;
+
+
+    if (!date) return;
+
+
+    saveDaily();
+
+
+    trackerData.daily[date].completedDay =
+        true;
+
+
+    saveTracker();
+
+
+    buildWeekly();
+
+    buildMonthly();
+
+
+    alert(
+        "Alhamdulillah 🤍 You showed up for the Qur’an today."
+    );
+
+}
+
+
+/* =====================================================
+   WEEKLY
+===================================================== */
+
+function getDateKey(date) {
+
+    return (
+        date.getFullYear() +
+        "-" +
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0") +
+        "-" +
+        String(
+            date.getDate()
+        ).padStart(2, "0")
+    );
+
+}
+
+
+function buildWeekly() {
+
+    const container =
+        document.getElementById(
+            "weekDays"
+        );
+
+
+    if (!container) return;
+
+
+    container.innerHTML = "";
+
+
+    const today =
+        new Date();
+
+
+    const currentDay =
+        today.getDay();
+
+
+    const mondayOffset =
+        currentDay === 0
+            ? -6
+            : 1 - currentDay;
+
+
+    const names = [
+        "M",
+        "T",
+        "W",
+        "T",
+        "F",
+        "S",
+        "S"
+    ];
+
+
+    let completedDays = 0;
+
+
+    for (
+        let i = 0;
+        i < 7;
+        i++
+    ) {
+
+        const date =
+            new Date(today);
+
+
+        date.setDate(
+            today.getDate() +
+            mondayOffset +
+            i
+        );
+
+
+        const key =
+            getDateKey(date);
+
+
+        const data =
+            trackerData.daily[key] || {};
+
+
+        if (data.completedDay) {
+            completedDays++;
+        }
+
+
+        const box =
+            document.createElement("div");
+
+
+        box.className =
+            "day-box";
+
+
+        box.innerHTML = `
+
+            <div class="day-name">
+                ${names[i]}
+            </div>
+
+            <div class="day-number">
+                ${date.getDate()}
+            </div>
+
+            <input
+                class="day-check"
+                type="checkbox"
+                ${data.completedDay ? "checked" : ""}
+                onchange="toggleWeeklyDay('${key}', this.checked)"
+            >
+
+        `;
+
+
+        container.appendChild(box);
+
+    }
+
+
+    const percentage =
+        Math.round(
+            completedDays /
+            7 *
+            100
+        );
+
+
+    document
+        .getElementById(
+            "weeklyProgressFill"
+        )
+        .style.width =
+        percentage + "%";
+
+
+    document
+        .getElementById(
+            "weeklyProgressText"
+        )
+        .textContent =
+        percentage +
+        "% completed";
+
+}
+
+
+function toggleWeeklyDay(
+    date,
+    checked
+) {
+
+    if (!trackerData.daily[date]) {
+        trackerData.daily[date] = {};
+    }
+
+
+    trackerData.daily[date].completedDay =
+        checked;
+
+
+    saveTracker();
+
+    buildWeekly();
+
+    buildMonthly();
+
+}
+
+
+/* =====================================================
+   WEEKLY REFLECTION
+===================================================== */
+
+function saveWeeklyReflection() {
+
+    trackerData.weeklyReflection =
+        document.getElementById(
+            "weeklyReflection"
+        ).value;
+
+
+    saveTracker();
+
+}
+
+
+function loadWeeklyReflection() {
+
+    const element =
+        document.getElementById(
+            "weeklyReflection"
+        );
+
+
+    if (element) {
+
+        element.value =
+            trackerData.weeklyReflection || "";
+
+    }
+
+}
+
+
+/* =====================================================
+   MONTHLY
+===================================================== */
+
+function getCombinedRanges(data) {
+
+    const ranges = [];
+
+
+    if (data.newRange) {
+        ranges.push(
+            "N: " + data.newRange
+        );
+    }
+
+
+    if (data.oldRange) {
+        ranges.push(
+            "O: " + data.oldRange
+        );
+    }
+
+
+    if (data.recentRange) {
+        ranges.push(
+            "R: " + data.recentRange
+        );
+    }
+
+
+    if (data.musafahahRange) {
+        ranges.push(
+            "M: " + data.musafahahRange
+        );
+    }
+
+
+    return ranges.join(" • ");
+
+}
+
+
+function hasR1(data) {
+
+    return Boolean(
+        data.newR1 ||
+        data.oldR1 ||
+        data.recentR1 ||
+        data.musafahahR1
+    );
+
+}
+
+
+function hasR2(data) {
+
+    return Boolean(
+        data.newR2 ||
+        data.oldR2 ||
+        data.recentR2 ||
+        data.musafahahR2
+    );
+
+}
+
+
+function hasR3(data) {
+
+    return Boolean(
+        data.newR3 ||
+        data.oldR3 ||
+        data.recentR3 ||
+        data.musafahahR3
+    );
+
+}
+
+
+function hasCompleted(data) {
+
+    return Boolean(
+        data.completedDay ||
+        data.newCompleted ||
+        data.oldCompleted ||
+        data.recentCompleted ||
+        data.musafahahCompleted
+    );
+
+}
+
+
+function buildMonthly() {
+
+    const body =
+        document.getElementById(
+            "monthlyBody"
+        );
+
+
+    if (!body) return;
+
+
+    body.innerHTML = "";
+
+
+    const today =
+        new Date();
+
+
+    const year =
+        today.getFullYear();
+
+
+    const month =
+        today.getMonth();
+
+
+    let completedDays = 0;
+
+
+    const daysInMonth =
+        new Date(
+            year,
+            month + 1,
+            0
+        ).getDate();
+
+
+    for (
+        let day = 1;
+        day <= daysInMonth;
+        day++
+    ) {
+
+        const key =
+            `${year}-${String(month + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+
+
+        const data =
+            trackerData.daily[key] || {};
+
+
+        const completed =
+            hasCompleted(data);
+
+
+        if (completed) {
+            completedDays++;
+        }
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td class="month-day">
+                ${day}
+            </td>
+
+            <td>
+                ${getCombinedRanges(data) || "—"}
+            </td>
+
+            <td>
+
+                <input
+                    class="month-check"
+                    type="checkbox"
+                    ${completed ? "checked" : ""}
+                    onchange="toggleMonthlyCompleted('${key}', this.checked)"
+                >
+
+            </td>
+
+            <td>
+
+                <input
+                    class="month-check"
+                    type="checkbox"
+                    ${hasR1(data) ? "checked" : ""}
+                    onchange="toggleMonthlyRevision('${key}','R1',this.checked)"
+                >
+
+            </td>
+
+            <td>
+
+                <input
+                    class="month-check"
+                    type="checkbox"
+                    ${hasR2(data) ? "checked" : ""}
+                    onchange="toggleMonthlyRevision('${key}','R2',this.checked)"
+                >
+
+            </td>
+
+            <td>
+
+                <input
+                    class="month-check"
+                    type="checkbox"
+                    ${hasR3(data) ? "checked" : ""}
+                    onchange="toggleMonthlyRevision('${key}','R3',this.checked)"
+                >
+
+            </td>
+
+        `;
+
+
+        body.appendChild(row);
+
+    }
+
+
+    const percentage =
+        Math.round(
+            completedDays /
+            daysInMonth *
+            100
+        );
+
+
+    document
+        .getElementById(
+            "monthlyProgressFill"
+        )
+        .style.width =
+        percentage + "%";
+
+
+    document
+        .getElementById(
+            "monthlyProgressText"
+        )
+        .textContent =
+        percentage +
+        "% completed";
+
+}
+
+
+function toggleMonthlyCompleted(
+    date,
+    checked
+) {
+
+    if (!trackerData.daily[date]) {
+        trackerData.daily[date] = {};
+    }
+
+
+    trackerData.daily[date].completedDay =
+        checked;
+
+
+    saveTracker();
+
+    buildMonthly();
+
+    buildWeekly();
+
+}
+
+
+function toggleMonthlyRevision(
+    date,
+    revision,
+    checked
+) {
+
+    if (!trackerData.daily[date]) {
+        trackerData.daily[date] = {};
+    }
+
+
+    if (revision === "R1") {
+        trackerData.daily[date].newR1 =
+            checked;
+    }
+
+
+    if (revision === "R2") {
+        trackerData.daily[date].newR2 =
+            checked;
+    }
+
+
+    if (revision === "R3") {
+        trackerData.daily[date].newR3 =
+            checked;
+    }
+
+
+    saveTracker();
+
+    buildMonthly();
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadPlans();
+
+        loadWeeklyReflection();
+
+        setToday();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
